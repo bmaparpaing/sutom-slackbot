@@ -2,6 +2,7 @@ package com.bmaparpaing.sutomslackbot;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -12,26 +13,29 @@ class PodiumJourServiceTest {
     private final PodiumJourService podiumJourService = new PodiumJourService();
 
     @Test
-    void sortJoueurs_givenEmptyList_shouldReturnEmptyList() {
-        var result = podiumJourService.sortJoueurs(Collections.emptyList());
+    void sortSlackPartages_givenEmptyList_shouldReturnEmptyList() {
+        var result = podiumJourService.sortSlackPartages(Collections.emptyList());
 
         assertThat(result).isEmpty();
     }
 
     @Test
-    void sortJoueurs_givenJoueurList_shouldReturnSortedList() {
-        var joueur1 = Joueur.builder().id(1L).nom("Joueur 1").coup(3).lettreCorrecte(12).lettreMalPlacee(4)
-                .build();
-        var joueur2 = Joueur.builder().id(2L).nom("Joueur 2").coup(1).lettreCorrecte(6).lettreMalPlacee(0)
-                .build();
-        var joueur3 = Joueur.builder().id(3L).nom("Joueur 3").coup(2).lettreCorrecte(8).lettreMalPlacee(1)
-                .build();
-        var joueur4 = Joueur.builder().id(4L).nom("Joueur 4").coup(2).lettreCorrecte(7).lettreMalPlacee(4)
-                .build();
+    void sortSlackPartages_givenJoueurList_shouldReturnSortedList() {
+        var partage1 = new SlackPartage(new Joueur(1L, "Joueur 1"),
+            Instant.now(), 3, 12, 4);
+        var partage2 = new SlackPartage(new Joueur(2L, "Joueur 2"),
+            Instant.now(), 1, 6, 0);
+        var partage3 = new SlackPartage(new Joueur(3L, "Joueur 3"),
+            Instant.now(), 2, 8, 1);
+        var partage4 = new SlackPartage(new Joueur(4L, "Joueur 4"),
+            Instant.now(), 2, 7, 4);
+        var partage5 = new SlackPartage(new Joueur(5L, "Joueur 5"),
+            Instant.now(), 2, 8, 1);
 
-        var result = podiumJourService.sortJoueurs(Arrays.asList(joueur1, joueur2, joueur3, joueur4));
+        var result = podiumJourService.sortSlackPartages(
+            Arrays.asList(partage1, partage2, partage3, partage4, partage5));
 
-        assertThat(result).containsExactly(joueur2, joueur4, joueur3, joueur1);
+        assertThat(result).containsExactly(partage2, partage4, partage3, partage5, partage1);
     }
 
 }

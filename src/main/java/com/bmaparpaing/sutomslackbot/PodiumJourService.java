@@ -8,10 +8,11 @@ import java.util.List;
 @Service
 public class PodiumJourService {
 
-    public List<Joueur> sortJoueurs(List<Joueur> joueurs) {
-        joueurs.sort(Comparator.comparingInt(Joueur::getCoup)
-                .thenComparingInt(Joueur::getLettreCorrecte)
-                .thenComparingInt(Joueur::getLettreMalPlacee));
-        return joueurs;
+    public List<SlackPartage> sortSlackPartages(List<SlackPartage> slackPartages) {
+        slackPartages.sort(Comparator.comparingInt(SlackPartage::getCoup)
+            .thenComparingInt(SlackPartage::getLettreCorrecte)
+            .thenComparingInt(SlackPartage::getLettreMalPlacee)
+            .thenComparing(SlackPartage::getTimestamp));
+        return slackPartages;
     }
 }

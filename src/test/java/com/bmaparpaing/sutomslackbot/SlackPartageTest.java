@@ -3,6 +3,7 @@ package com.bmaparpaing.sutomslackbot;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,7 +14,7 @@ class SlackPartageTest {
 
     @Test
     void newSlackPartage_withEmptyText_shouldCreateWithZeros() {
-        var result = new SlackPartage("");
+        var result = new SlackPartage(new Joueur(1L, "Joueur1"), "", Instant.now());
 
         assertThat(result).extracting(
                 SlackPartage::getCoup,
@@ -27,7 +28,7 @@ class SlackPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SLACK_PARTAGE_1_PATH);
         String slackPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SlackPartage(slackPartage1);
+        var result = new SlackPartage(new Joueur(1L, "Joueur1"), slackPartage1, Instant.now());
 
         assertThat(result).extracting(
                 SlackPartage::getCoup,
@@ -41,7 +42,7 @@ class SlackPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SLACK_PARTAGE_2_PATH);
         String slackPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SlackPartage(slackPartage1);
+        var result = new SlackPartage(new Joueur(1L, "Joueur1"), slackPartage1, Instant.now());
 
         assertThat(result).extracting(
                 SlackPartage::getCoup,
