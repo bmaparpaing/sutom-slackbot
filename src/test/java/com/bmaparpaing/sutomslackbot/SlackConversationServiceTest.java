@@ -25,10 +25,10 @@ class SlackConversationServiceTest {
         assertThat(results)
             .extracting(SlackPartage::joueur)
             .containsExactly(
-                new Joueur(1L, "Michel UN"),
-                new Joueur(2L, "Martin DEUX"),
-                new Joueur(3L, "Jean TROIS"),
-                new Joueur(4L, "Paul QUATRE"));
+                new Joueur("1", "Michel UN"),
+                new Joueur("2", "Martin DEUX"),
+                new Joueur("3", "Jean TROIS"),
+                new Joueur("4", "Paul QUATRE"));
         assertThat(results)
             .extracting(SlackPartage::coup)
             .doesNotContain(0);

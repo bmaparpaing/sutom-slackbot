@@ -33,7 +33,7 @@ public class SlackConversationService {
             } else if (matcherSlackPartage.find()) {
                 int coups = Integer.parseInt(matcherSlackPartage.group(1));
                 slackPartages.add(new SlackPartage(
-                    new Joueur(idJoueur++, lastJoueur),
+                    new Joueur(idJoueur++ + "", lastJoueur),
                     new SlackPartageTexte(line + takeNLines(iterator, coups)),
                     Instant.now()));
             }

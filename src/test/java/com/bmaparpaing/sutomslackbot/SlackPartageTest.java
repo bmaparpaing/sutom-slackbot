@@ -14,7 +14,7 @@ class SlackPartageTest {
 
     @Test
     void newSlackPartage_withEmptyText_shouldCreateWithZeros() {
-        var result = new SlackPartage(new Joueur(1L, "Joueur1"), new SlackPartageTexte(""), Instant.now());
+        var result = new SlackPartage(new Joueur("1", "Joueur1"), new SlackPartageTexte(""), Instant.now());
 
         assertThat(result).extracting(
                 SlackPartage::coup,
@@ -28,7 +28,7 @@ class SlackPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SLACK_PARTAGE_1_PATH);
         String slackPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SlackPartage(new Joueur(1L, "Joueur1"), new SlackPartageTexte(slackPartage1), Instant.now());
+        var result = new SlackPartage(new Joueur("1", "Joueur1"), new SlackPartageTexte(slackPartage1), Instant.now());
 
         assertThat(result).extracting(
                 SlackPartage::coup,
@@ -42,7 +42,7 @@ class SlackPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SLACK_PARTAGE_2_PATH);
         String slackPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SlackPartage(new Joueur(1L, "Joueur1"), new SlackPartageTexte(slackPartage1), Instant.now());
+        var result = new SlackPartage(new Joueur("1", "Joueur1"), new SlackPartageTexte(slackPartage1), Instant.now());
 
         assertThat(result).extracting(
                 SlackPartage::coup,

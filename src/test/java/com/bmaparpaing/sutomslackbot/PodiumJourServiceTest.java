@@ -21,15 +21,15 @@ class PodiumJourServiceTest {
 
     @Test
     void sortSlackPartages_givenJoueurList_shouldReturnSortedList() {
-        var partage1 = new SlackPartage(new Joueur(1L, "Joueur 1"),
+        var partage1 = new SlackPartage(new Joueur("1", "Joueur 1"),
             Instant.now(), 3, 12, 4);
-        var partage2 = new SlackPartage(new Joueur(2L, "Joueur 2"),
+        var partage2 = new SlackPartage(new Joueur("2", "Joueur 2"),
             Instant.now(), 1, 6, 0);
-        var partage3 = new SlackPartage(new Joueur(3L, "Joueur 3"),
+        var partage3 = new SlackPartage(new Joueur("3", "Joueur 3"),
             Instant.now(), 2, 8, 1);
-        var partage4 = new SlackPartage(new Joueur(4L, "Joueur 4"),
+        var partage4 = new SlackPartage(new Joueur("4", "Joueur 4"),
             Instant.now(), 2, 7, 4);
-        var partage5 = new SlackPartage(new Joueur(5L, "Joueur 5"),
+        var partage5 = new SlackPartage(new Joueur("5", "Joueur 5"),
             Instant.now(), 2, 8, 1);
 
         var result = podiumJourService.sortSlackPartages(
@@ -47,15 +47,15 @@ class PodiumJourServiceTest {
 
     @Test
     void podiumJourPrettyPrint_givenListOfSlackPartages_shouldReturnPodiumPrettyPrint() {
-        var partage1 = new SlackPartage(new Joueur(1L, "Joueur 1"),
+        var partage1 = new SlackPartage(new Joueur("1", "Joueur 1"),
             Instant.now(), 3, 12, 4);
-        var partage2 = new SlackPartage(new Joueur(2L, "Joueur 2"),
+        var partage2 = new SlackPartage(new Joueur("2", "Joueur 2"),
             Instant.now(), 1, 6, 0);
-        var partage3 = new SlackPartage(new Joueur(3L, "Joueur 3"),
+        var partage3 = new SlackPartage(new Joueur("3", "Joueur 3"),
             Instant.now(), 2, 8, 1);
-        var partage4 = new SlackPartage(new Joueur(4L, "Joueur 4"),
+        var partage4 = new SlackPartage(new Joueur("4", "Joueur 4"),
             Instant.now(), 2, 7, 4);
-        var partage5 = new SlackPartage(new Joueur(5L, "Joueur 5"),
+        var partage5 = new SlackPartage(new Joueur("5", "Joueur 5"),
             Instant.now(), 2, 8, 1);
 
         var result = podiumJourService.podiumJourPrettyPrint(
