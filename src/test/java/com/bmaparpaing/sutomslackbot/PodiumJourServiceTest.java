@@ -64,9 +64,9 @@ class PodiumJourServiceTest {
         assertThat(result).isEqualTo("""
             SUTOM
                         
-            :trophée: *Joueur 1*
-            :médaille_argent: Joueur 2
-            :médaille_bronze: Joueur 3
+            :trophy: *Joueur 1*
+            :second_place_medal: Joueur 2
+            :third_place_medal: Joueur 3
                         
             4. Joueur 4  5. Joueur 5""");
     }

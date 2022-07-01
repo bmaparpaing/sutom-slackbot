@@ -20,10 +20,10 @@ public class PodiumJourService {
         var sb = new StringBuilder();
         for (int i = 0; i < slackPartages.size(); i++) {
             switch (i) {
-                case 0 -> sb.append("SUTOM\n\n:trophée: *").append(slackPartages.get(i).getJoueur().getNom())
+                case 0 -> sb.append("SUTOM\n\n:trophy: *").append(slackPartages.get(i).getJoueur().getNom())
                     .append("*");
-                case 1 -> sb.append("\n:médaille_argent: ").append(slackPartages.get(i).getJoueur().getNom());
-                case 2 -> sb.append("\n:médaille_bronze: ").append(slackPartages.get(i).getJoueur().getNom());
+                case 1 -> sb.append("\n:second_place_medal: ").append(slackPartages.get(i).getJoueur().getNom());
+                case 2 -> sb.append("\n:third_place_medal: ").append(slackPartages.get(i).getJoueur().getNom());
                 case 3 -> sb.append("\n\n").append(i + 1).append(". ").append(slackPartages.get(i).getJoueur().getNom());
                 default -> sb.append("  ").append(i + 1).append(". ").append(slackPartages.get(i).getJoueur().getNom());
             }
