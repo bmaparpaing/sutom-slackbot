@@ -17,7 +17,7 @@ public class SlackPartageTexte {
     public SlackPartageTexte(String texte) {
         var matcher = COUP_PATTERN.matcher(texte);
         coup = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
-        lettreCorrecte = count(texte, LETTRE_CORRECTE) + count(texte, LETTRE_CORRECTE_FR);
+        lettreCorrecte = count(texte, LETTRE_CORRECTE) + count(texte, LETTRE_CORRECTE_FR); // test de ligne qui dépasse la taille autorisé
         lettreMalPlacee = count(texte, LETTRE_MAL_PLACEE) + count(texte, LETTRE_MAL_PLACEE_FR);
     }
 
