@@ -16,6 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        # 0 = Récupération de tout l'historique git
+        # nécessaire pour que EditorConfig-Action fonctionne en mode diff
+        fetch-depth: 0
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
