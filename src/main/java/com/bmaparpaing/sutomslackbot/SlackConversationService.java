@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.bmaparpaing.sutomslackbot.SlackPartage.COUP_PATTERN;
+import static com.bmaparpaing.sutomslackbot.SlackPartageTexte.COUP_PATTERN;
 
 @Service
 public class SlackConversationService {
@@ -34,7 +34,7 @@ public class SlackConversationService {
                 int coups = Integer.parseInt(matcherSlackPartage.group(1));
                 slackPartages.add(new SlackPartage(
                     new Joueur(idJoueur++, lastJoueur),
-                    line + takeNLines(iterator, coups),
+                    new SlackPartageTexte(line + takeNLines(iterator, coups)),
                     Instant.now()));
             }
         }

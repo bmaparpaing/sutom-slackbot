@@ -14,12 +14,12 @@ class SlackPartageTest {
 
     @Test
     void newSlackPartage_withEmptyText_shouldCreateWithZeros() {
-        var result = new SlackPartage(new Joueur(1L, "Joueur1"), "", Instant.now());
+        var result = new SlackPartage(new Joueur(1L, "Joueur1"), new SlackPartageTexte(""), Instant.now());
 
         assertThat(result).extracting(
-                SlackPartage::getCoup,
-                SlackPartage::getLettreCorrecte,
-                SlackPartage::getLettreMalPlacee)
+                SlackPartage::coup,
+                SlackPartage::lettreCorrecte,
+                SlackPartage::lettreMalPlacee)
             .containsExactly(0, 0, 0);
     }
 
@@ -28,12 +28,12 @@ class SlackPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SLACK_PARTAGE_1_PATH);
         String slackPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SlackPartage(new Joueur(1L, "Joueur1"), slackPartage1, Instant.now());
+        var result = new SlackPartage(new Joueur(1L, "Joueur1"), new SlackPartageTexte(slackPartage1), Instant.now());
 
         assertThat(result).extracting(
-                SlackPartage::getCoup,
-                SlackPartage::getLettreCorrecte,
-                SlackPartage::getLettreMalPlacee)
+                SlackPartage::coup,
+                SlackPartage::lettreCorrecte,
+                SlackPartage::lettreMalPlacee)
             .containsExactly(3, 8, 4);
     }
 
@@ -42,12 +42,12 @@ class SlackPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SLACK_PARTAGE_2_PATH);
         String slackPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SlackPartage(new Joueur(1L, "Joueur1"), slackPartage1, Instant.now());
+        var result = new SlackPartage(new Joueur(1L, "Joueur1"), new SlackPartageTexte(slackPartage1), Instant.now());
 
         assertThat(result).extracting(
-                SlackPartage::getCoup,
-                SlackPartage::getLettreCorrecte,
-                SlackPartage::getLettreMalPlacee)
+                SlackPartage::coup,
+                SlackPartage::lettreCorrecte,
+                SlackPartage::lettreMalPlacee)
             .containsExactly(6, 18, 8);
     }
 }

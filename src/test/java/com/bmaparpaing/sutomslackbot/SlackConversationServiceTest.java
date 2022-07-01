@@ -23,14 +23,14 @@ class SlackConversationServiceTest {
             Path.of(resource != null ? resource.toURI() : Path.of(SLACK_PARTAGES_PATH).toUri()));
 
         assertThat(results)
-            .extracting(SlackPartage::getJoueur)
+            .extracting(SlackPartage::joueur)
             .containsExactly(
                 new Joueur(1L, "Michel UN"),
                 new Joueur(2L, "Martin DEUX"),
                 new Joueur(3L, "Jean TROIS"),
                 new Joueur(4L, "Paul QUATRE"));
         assertThat(results)
-            .extracting(SlackPartage::getCoup)
+            .extracting(SlackPartage::coup)
             .doesNotContain(0);
     }
 
