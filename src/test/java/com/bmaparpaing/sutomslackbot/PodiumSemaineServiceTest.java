@@ -115,8 +115,8 @@ class PodiumSemaineServiceTest {
 
         var result = podiumSemaineService.podiumSemainePrettyPrint(List.of(
             Set.of(joueur1),
-            new LinkedHashSet<>(Set.of(joueur2, joueur3)),
-            new LinkedHashSet<>(Set.of(joueur4, joueur5))));
+            new LinkedHashSet<>(List.of(joueur2, joueur3)),
+            new LinkedHashSet<>(List.of(joueur4, joueur5))));
 
         assertThat(result).isEqualTo("""
             SUTOM
