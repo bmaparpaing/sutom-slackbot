@@ -9,12 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class SutomSlackbotApplicationTests {
 
-	@Autowired
-	private PodiumJourService podiumJourService;
+    @Autowired
+    private PodiumJourService podiumJourService;
 
-	@Test
-	void contextLoads() {
-		assertThat(podiumJourService).isNotNull();
-	}
+    @Test
+    void contextLoads() {
+        assertThat(podiumJourService).isNotNull();
+    }
 
 }
