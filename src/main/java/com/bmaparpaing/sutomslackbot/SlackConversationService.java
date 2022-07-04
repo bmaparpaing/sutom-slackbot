@@ -43,8 +43,8 @@ public class SlackConversationService {
                 int coups = Integer.parseInt(matcherSutomPartage.group(1));
                 sutomPartages.add(new SutomPartage(
                     new Joueur(idJoueur++ + "", lastJoueur),
-                    new SutomPartageTexte(line + takeNLines(iterator, coups)),
-                    Instant.now()));
+                    Instant.now(),
+                    new SutomPartageTexte(line + takeNLines(iterator, coups))));
             }
         }
         return sutomPartages;
@@ -66,8 +66,8 @@ public class SlackConversationService {
             if (COUP_PATTERN.matcher(message.getText()).find()) {
                 UsersInfoResponse usersInfoResponse = slackService.fetchUserInfo(message.getUser());
                 partages.add(new SutomPartage(new Joueur(message.getUser(), usersInfoResponse.getUser().getRealName()),
-                    new SutomPartageTexte(message.getText()),
-                    Instant.ofEpochSecond(Long.parseLong(message.getTs().split("\\.")[0]))));
+                    Instant.ofEpochSecond(Long.parseLong(message.getTs().split("\\.")[0])),
+                    new SutomPartageTexte(message.getText())));
             }
         }
         return partages;

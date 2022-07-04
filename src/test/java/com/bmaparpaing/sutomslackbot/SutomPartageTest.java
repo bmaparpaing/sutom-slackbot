@@ -14,7 +14,7 @@ class SutomPartageTest {
 
     @Test
     void newSutomPartage_withEmptyText_shouldCreateWithZeros() {
-        var result = new SutomPartage(new Joueur("1", "Joueur1"), new SutomPartageTexte(""), Instant.now());
+        var result = new SutomPartage(new Joueur("1", "Joueur1"), Instant.now(), new SutomPartageTexte(""));
 
         assertThat(result).extracting(
                 SutomPartage::coup,
@@ -28,7 +28,7 @@ class SutomPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SUTOM_PARTAGE_1_PATH);
         String sutomPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SutomPartage(new Joueur("1", "Joueur1"), new SutomPartageTexte(sutomPartage1), Instant.now());
+        var result = new SutomPartage(new Joueur("1", "Joueur1"), Instant.now(), new SutomPartageTexte(sutomPartage1));
 
         assertThat(result).extracting(
                 SutomPartage::coup,
@@ -42,7 +42,7 @@ class SutomPartageTest {
         var resourceStream = getClass().getClassLoader().getResourceAsStream(SUTOM_PARTAGE_2_PATH);
         String sutomPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
 
-        var result = new SutomPartage(new Joueur("1", "Joueur1"), new SutomPartageTexte(sutomPartage1), Instant.now());
+        var result = new SutomPartage(new Joueur("1", "Joueur1"), Instant.now(), new SutomPartageTexte(sutomPartage1));
 
         assertThat(result).extracting(
                 SutomPartage::coup,

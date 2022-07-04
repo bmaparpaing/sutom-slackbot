@@ -95,11 +95,11 @@ class SlackConversationServiceTest {
 
         assertThat(result).containsExactly(
             new SutomPartage(new Joueur(message1.getUser(), user1.getRealName()),
-                new SutomPartageTexte(message1.getText()),
-                Instant.parse("2022-07-01T00:00:00.00Z")),
+                Instant.parse("2022-07-01T00:00:00.00Z"),
+                new SutomPartageTexte(message1.getText())),
             new SutomPartage(new Joueur(message2.getUser(), user2.getRealName()),
-                new SutomPartageTexte(message2.getText()),
-                Instant.parse("2022-07-02T00:00:00.00Z")));
+                Instant.parse("2022-07-02T00:00:00.00Z"),
+                new SutomPartageTexte(message2.getText())));
     }
 
 }
