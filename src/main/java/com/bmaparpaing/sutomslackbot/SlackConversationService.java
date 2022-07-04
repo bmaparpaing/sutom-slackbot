@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.bmaparpaing.sutomslackbot.SlackPartageTexte.COUP_PATTERN;
+import static com.bmaparpaing.sutomslackbot.SutomPartageTexte.COUP_PATTERN;
 
 @Service
 public class SlackConversationService {
@@ -27,27 +27,27 @@ public class SlackConversationService {
         this.slackService = slackService;
     }
 
-    public List<SlackPartage> readFromFilePath(Path path) throws IOException {
+    public List<SutomPartage> readFromFilePath(Path path) throws IOException {
         List<String> lines = Files.readAllLines(path);
         var iterator = lines.iterator();
         String lastJoueur = "";
-        List<SlackPartage> slackPartages = new ArrayList<>();
+        List<SutomPartage> sutomPartages = new ArrayList<>();
         long idJoueur = 1;
         while (iterator.hasNext()) {
             String line = iterator.next();
             var matcherJoueur = JOUEUR_PATTERN.matcher(line);
-            var matcherSlackPartage = COUP_PATTERN.matcher(line);
+            var matcherSutomPartage = COUP_PATTERN.matcher(line);
             if (matcherJoueur.find()) {
                 lastJoueur = matcherJoueur.group(1);
-            } else if (matcherSlackPartage.find()) {
-                int coups = Integer.parseInt(matcherSlackPartage.group(1));
-                slackPartages.add(new SlackPartage(
+            } else if (matcherSutomPartage.find()) {
+                int coups = Integer.parseInt(matcherSutomPartage.group(1));
+                sutomPartages.add(new SutomPartage(
                     new Joueur(idJoueur++ + "", lastJoueur),
-                    new SlackPartageTexte(line + takeNLines(iterator, coups)),
+                    new SutomPartageTexte(line + takeNLines(iterator, coups)),
                     Instant.now()));
             }
         }
-        return slackPartages;
+        return sutomPartages;
     }
 
     private String takeNLines(Iterator<String> iterator, int n) {
@@ -58,15 +58,15 @@ public class SlackConversationService {
         return sb.toString();
     }
 
-    public List<SlackPartage> readTodayConversationFromSlackApi()
+    public List<SutomPartage> readTodayConversationFromSlackApi()
         throws SlackApiException, IOException {
         List<Message> messages = slackService.fetchTodayConversation();
-        List<SlackPartage> partages = new ArrayList<>();
+        List<SutomPartage> partages = new ArrayList<>();
         for (Message message : messages) {
             if (COUP_PATTERN.matcher(message.getText()).find()) {
                 UsersInfoResponse usersInfoResponse = slackService.fetchUserInfo(message.getUser());
-                partages.add(new SlackPartage(new Joueur(message.getUser(), usersInfoResponse.getUser().getRealName()),
-                    new SlackPartageTexte(message.getText()),
+                partages.add(new SutomPartage(new Joueur(message.getUser(), usersInfoResponse.getUser().getRealName()),
+                    new SutomPartageTexte(message.getText()),
                     Instant.ofEpochSecond(Long.parseLong(message.getTs().split("\\.")[0]))));
             }
         }

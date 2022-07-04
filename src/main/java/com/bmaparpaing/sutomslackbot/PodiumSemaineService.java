@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @Service
 public class PodiumSemaineService {
 
-    public Map<Joueur, int[]> computeScoreSemaine(List<List<SlackPartage>> podiumJours) {
+    public Map<Joueur, int[]> computeScoreSemaine(List<List<SutomPartage>> podiumJours) {
         Integer[] nombreJoueurs = podiumJours.stream().map(List::size).toArray(Integer[]::new);
         var scoreSemaine = new HashMap<Joueur, int[]>();
         for (int i = 0; i < podiumJours.size(); i++) {

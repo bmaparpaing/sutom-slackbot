@@ -2,7 +2,7 @@ package com.bmaparpaing.sutomslackbot;
 
 import java.util.regex.Pattern;
 
-public class SlackPartageTexte {
+public class SutomPartageTexte {
 
     private static final String LETTRE_CORRECTE = ":large_red_square:";
     private static final String LETTRE_CORRECTE_FR = ":grand_carré_rouge:";
@@ -14,7 +14,7 @@ public class SlackPartageTexte {
     private final int lettreCorrecte;
     private final int lettreMalPlacee;
 
-    public SlackPartageTexte(String texte) {
+    public SutomPartageTexte(String texte) {
         var matcher = COUP_PATTERN.matcher(texte);
         coup = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
         lettreCorrecte = count(texte, LETTRE_CORRECTE) + count(texte, LETTRE_CORRECTE_FR);

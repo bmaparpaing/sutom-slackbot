@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SlackConversationServiceTest {
 
-    private static final String SLACK_PARTAGES_PATH = "slack-partages.txt";
+    private static final String SUTOM_PARTAGES_PATH = "sutom-partages.txt";
 
     @Mock
     private SlackService slackService;
@@ -33,21 +33,21 @@ class SlackConversationServiceTest {
     private SlackConversationService slackConversationService;
 
     @Test
-    void readFromFile_withSlackPartagesTestFile_shouldReturnListSlackPartageWithJoueur()
+    void readFromFile_withSutomPartagesTestFile_shouldReturnListSutomPartageWithJoueur()
         throws URISyntaxException, IOException {
-        var resource = getClass().getClassLoader().getResource(SLACK_PARTAGES_PATH);
+        var resource = getClass().getClassLoader().getResource(SUTOM_PARTAGES_PATH);
         var results = slackConversationService.readFromFilePath(
-            Path.of(resource != null ? resource.toURI() : Path.of(SLACK_PARTAGES_PATH).toUri()));
+            Path.of(resource != null ? resource.toURI() : Path.of(SUTOM_PARTAGES_PATH).toUri()));
 
         assertThat(results)
-            .extracting(SlackPartage::joueur)
+            .extracting(SutomPartage::joueur)
             .containsExactly(
                 new Joueur("1", "Michel UN"),
                 new Joueur("2", "Martin DEUX"),
                 new Joueur("3", "Jean TROIS"),
                 new Joueur("4", "Paul QUATRE"));
         assertThat(results)
-            .extracting(SlackPartage::coup)
+            .extracting(SutomPartage::coup)
             .doesNotContain(0);
     }
 
@@ -69,7 +69,7 @@ class SlackConversationServiceTest {
     }
 
     @Test
-    void readTodayConversationFromSlackApi_givenTodayConversation_shouldReturnSlackPartageList()
+    void readTodayConversationFromSlackApi_givenTodayConversation_shouldReturnSutomPartageList()
         throws SlackApiException, IOException {
         var message1 = new Message();
         message1.setUser("A1");
@@ -94,11 +94,11 @@ class SlackConversationServiceTest {
         var result = slackConversationService.readTodayConversationFromSlackApi();
 
         assertThat(result).containsExactly(
-            new SlackPartage(new Joueur(message1.getUser(), user1.getRealName()),
-                new SlackPartageTexte(message1.getText()),
+            new SutomPartage(new Joueur(message1.getUser(), user1.getRealName()),
+                new SutomPartageTexte(message1.getText()),
                 Instant.parse("2022-07-01T00:00:00.00Z")),
-            new SlackPartage(new Joueur(message2.getUser(), user2.getRealName()),
-                new SlackPartageTexte(message2.getText()),
+            new SutomPartage(new Joueur(message2.getUser(), user2.getRealName()),
+                new SutomPartageTexte(message2.getText()),
                 Instant.parse("2022-07-02T00:00:00.00Z")));
     }
 

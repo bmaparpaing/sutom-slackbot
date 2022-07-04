@@ -24,13 +24,13 @@ class PodiumSemaineServiceTest {
         var joueur2 = new Joueur("A2", "Joueur DEUX");
         var joueur3 = new Joueur("A3", "Joueur TROIS");
         var now = Instant.now();
-        var slackPartage1 = new SlackPartage(joueur1, now, 0, 0, 0);
-        var slackPartage2 = new SlackPartage(joueur2, now, 0, 0, 0);
-        var slackPartage3 = new SlackPartage(joueur3, now, 0, 0, 0);
-        var podium1 = List.of(slackPartage1, slackPartage3);
-        var podium2 = List.of(slackPartage2, slackPartage1, slackPartage3);
-        var podium3 = List.of(slackPartage1, slackPartage2);
-        var podium4 = List.of(slackPartage2);
+        var sutomPartage1 = new SutomPartage(joueur1, now, 0, 0, 0);
+        var sutomPartage2 = new SutomPartage(joueur2, now, 0, 0, 0);
+        var sutomPartage3 = new SutomPartage(joueur3, now, 0, 0, 0);
+        var podium1 = List.of(sutomPartage1, sutomPartage3);
+        var podium2 = List.of(sutomPartage2, sutomPartage1, sutomPartage3);
+        var podium3 = List.of(sutomPartage1, sutomPartage2);
+        var podium4 = List.of(sutomPartage2);
         var result = podiumSemaineService.computeScoreSemaine(List.of(podium1, podium2, podium3, podium4, List.of()));
 
         assertThat(result).containsOnly(
