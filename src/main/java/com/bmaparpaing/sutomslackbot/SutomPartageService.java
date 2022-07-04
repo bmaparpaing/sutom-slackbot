@@ -17,13 +17,13 @@ import java.util.regex.Pattern;
 import static com.bmaparpaing.sutomslackbot.SutomPartageTexte.COUP_PATTERN;
 
 @Service
-public class SlackConversationService {
+public class SutomPartageService {
 
     public static final Pattern JOUEUR_PATTERN = Pattern.compile("^([A-Z][A-zÀ-ú ]+ [A-zÀ-ú ]+)( - [\\d .]*)?$");
 
     private final SlackService slackService;
 
-    public SlackConversationService(SlackService slackService) {
+    public SutomPartageService(SlackService slackService) {
         this.slackService = slackService;
     }
 

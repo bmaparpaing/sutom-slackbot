@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class SlackConversationServiceTest {
+class SutomPartageServiceTest {
 
     private static final String SUTOM_PARTAGES_PATH = "sutom-partages.txt";
 
@@ -30,13 +30,13 @@ class SlackConversationServiceTest {
     private SlackService slackService;
 
     @InjectMocks
-    private SlackConversationService slackConversationService;
+    private SutomPartageService sutomPartageService;
 
     @Test
     void readFromFile_withSutomPartagesTestFile_shouldReturnListSutomPartageWithJoueur()
         throws URISyntaxException, IOException {
         var resource = getClass().getClassLoader().getResource(SUTOM_PARTAGES_PATH);
-        var results = slackConversationService.readFromFilePath(
+        var results = sutomPartageService.readFromFilePath(
             Path.of(resource != null ? resource.toURI() : Path.of(SUTOM_PARTAGES_PATH).toUri()));
 
         assertThat(results)
@@ -55,7 +55,7 @@ class SlackConversationServiceTest {
     void readFromFile_withNonExistentFile_shouldThrowIOException() {
         var path = Path.of("nonexistentfile");
 
-        assertThrows(IOException.class, () -> slackConversationService.readFromFilePath(path));
+        assertThrows(IOException.class, () -> sutomPartageService.readFromFilePath(path));
     }
 
     @Test
@@ -63,7 +63,7 @@ class SlackConversationServiceTest {
         throws SlackApiException, IOException {
         when(slackService.fetchTodayConversation()).thenReturn(Collections.emptyList());
 
-        var result = slackConversationService.readTodayConversationFromSlackApi();
+        var result = sutomPartageService.readTodayConversationFromSlackApi();
 
         assertThat(result).isEmpty();
     }
@@ -91,7 +91,7 @@ class SlackConversationServiceTest {
         when(slackService.fetchUserInfo(message1.getUser())).thenReturn(userInfo1);
         when(slackService.fetchUserInfo(message2.getUser())).thenReturn(userInfo2);
 
-        var result = slackConversationService.readTodayConversationFromSlackApi();
+        var result = sutomPartageService.readTodayConversationFromSlackApi();
 
         assertThat(result).containsExactly(
             new SutomPartage(new Joueur(message1.getUser(), user1.getRealName()),
