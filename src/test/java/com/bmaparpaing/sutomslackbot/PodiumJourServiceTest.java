@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static com.bmaparpaing.sutomslackbot.PodiumJourService.FULL_TEXT_DATE_FORMATTER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PodiumJourServiceTest {
@@ -62,13 +63,13 @@ class PodiumJourServiceTest {
             Arrays.asList(partage1, partage2, partage3, partage4, partage5));
 
         assertThat(result).isEqualTo("""
-            SUTOM
+            *SUTOM du %s*
                         
             :trophy: *Joueur 1*
             :second_place_medal: Joueur 2
             :third_place_medal: Joueur 3
                         
-            4. Joueur 4  5. Joueur 5""");
+            4. Joueur 4  5. Joueur 5""".formatted(FULL_TEXT_DATE_FORMATTER.format(Instant.now())));
     }
 
 }

@@ -2,11 +2,17 @@ package com.bmaparpaing.sutomslackbot;
 
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class PodiumJourService {
+
+    public static final DateTimeFormatter FULL_TEXT_DATE_FORMATTER =
+        DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.systemDefault());
 
     public List<SutomPartage> sortSutomPartages(List<SutomPartage> sutomPartages) {
         sutomPartages.sort(Comparator.comparingInt(SutomPartage::coup)
@@ -20,7 +26,8 @@ public class PodiumJourService {
         var sb = new StringBuilder();
         for (int i = 0; i < sutomPartages.size(); i++) {
             switch (i) {
-                case 0 -> sb.append("SUTOM\n\n:trophy: *").append(sutomPartages.get(i).joueur().nom()).append("*");
+                case 0 -> sb.append("*SUTOM du ").append(FULL_TEXT_DATE_FORMATTER.format(Instant.now())).append("*\n")
+                    .append("\n:trophy: *").append(sutomPartages.get(i).joueur().nom()).append("*");
                 case 1 -> sb.append("\n:second_place_medal: ").append(sutomPartages.get(i).joueur().nom());
                 case 2 -> sb.append("\n:third_place_medal: ").append(sutomPartages.get(i).joueur().nom());
                 case 3 -> sb.append("\n\n").append(i + 1).append(". ").append(sutomPartages.get(i).joueur().nom());
