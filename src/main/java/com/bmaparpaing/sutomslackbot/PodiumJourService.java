@@ -7,12 +7,13 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class PodiumJourService {
 
     public static final DateTimeFormatter FULL_TEXT_DATE_FORMATTER =
-        DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.of("Europe/Paris"));
+        DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.systemDefault()).withLocale(Locale.FRANCE);
 
     public List<SutomPartage> sortSutomPartages(List<SutomPartage> sutomPartages) {
         sutomPartages.sort(Comparator.comparingInt(SutomPartage::coup)
