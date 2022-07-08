@@ -12,7 +12,7 @@ import java.util.List;
 public class PodiumJourService {
 
     public static final DateTimeFormatter FULL_TEXT_DATE_FORMATTER =
-        DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.systemDefault());
+        DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.of("Europe/Paris"));
 
     public List<SutomPartage> sortSutomPartages(List<SutomPartage> sutomPartages) {
         sutomPartages.sort(Comparator.comparingInt(SutomPartage::coup)
