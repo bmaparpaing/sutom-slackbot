@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static com.bmaparpaing.sutomslackbot.SlackService.DEFAULT_FETCH_LIMIT;
+import static com.bmaparpaing.sutomslackbot.SlackProperties.DEFAULT_FETCH_LIMIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +30,9 @@ class SlackServiceTest {
 
     @Mock
     private MethodsClient client;
+
+    @Mock
+    private SlackProperties slackProperties;
 
     @InjectMocks
     private SlackService slackService;
@@ -44,6 +47,7 @@ class SlackServiceTest {
         var conversation = new ConversationsHistoryResponse();
         conversation.setMessages(List.of(message));
         conversation.setHasMore(false);
+        when(slackProperties.getFetchLimit()).thenReturn(DEFAULT_FETCH_LIMIT);
         when(client.conversationsHistory(
             ArgumentMatchers.<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>any()
         )).thenReturn(conversation);
@@ -141,6 +145,7 @@ class SlackServiceTest {
         var conversation = new ConversationsHistoryResponse();
         conversation.setMessages(List.of(message));
         conversation.setHasMore(false);
+        when(slackProperties.getFetchLimit()).thenReturn(DEFAULT_FETCH_LIMIT);
         when(client.conversationsHistory(
             ArgumentMatchers.<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>any()
         )).thenReturn(conversation);

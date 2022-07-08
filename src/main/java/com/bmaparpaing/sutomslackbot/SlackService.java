@@ -1,6 +1,5 @@
 package com.bmaparpaing.sutomslackbot;
 
-import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
@@ -18,17 +17,12 @@ import java.util.List;
 @Service
 public class SlackService {
 
-    private static final String TOKEN = "TOKEN";
-    private static final String CHANNEL = "CHANNEL";
-    public static final int DEFAULT_FETCH_LIMIT = 200;
     private final MethodsClient client;
+    private final SlackProperties slackProperties;
 
-    public SlackService() {
-        client = Slack.getInstance().methods(TOKEN);
-    }
-
-    public SlackService(MethodsClient client) {
+    public SlackService(MethodsClient client, SlackProperties slackProperties) {
         this.client = client;
+        this.slackProperties = slackProperties;
     }
 
     public List<Message> fetchTodayConversation() throws SlackApiException, IOException {
@@ -44,7 +38,10 @@ public class SlackService {
 
     private List<Message> fetchConversation(String oldest, String latest) throws SlackApiException, IOException {
         ConversationsHistoryResponse conversation = client.conversationsHistory(req ->
-            req.channel(CHANNEL).limit(DEFAULT_FETCH_LIMIT).oldest(oldest).latest(latest));
+            req.channel(slackProperties.getChannel())
+                .limit(slackProperties.getFetchLimit())
+                .oldest(oldest)
+                .latest(latest));
 
         List<Message> messages = new ArrayList<>(conversation.getMessages());
 
@@ -52,7 +49,11 @@ public class SlackService {
         while (hasMore) {
             String nextCursor = conversation.getResponseMetadata().getNextCursor();
             conversation = client.conversationsHistory(req ->
-                req.channel(CHANNEL).limit(DEFAULT_FETCH_LIMIT).oldest(oldest).latest(latest).cursor(nextCursor));
+                req.channel(slackProperties.getChannel())
+                    .limit(slackProperties.getFetchLimit())
+                    .oldest(oldest)
+                    .latest(latest)
+                    .cursor(nextCursor));
             messages.addAll(conversation.getMessages());
             hasMore = conversation.isHasMore();
         }
@@ -61,11 +62,11 @@ public class SlackService {
     }
 
     public UsersInfoResponse fetchUserInfo(String userId) throws SlackApiException, IOException {
-        return client.usersInfo(req -> req.token(TOKEN).user(userId));
+        return client.usersInfo(req -> req.token(slackProperties.getToken()).user(userId));
     }
 
     public ChatPostMessageResponse postMessage(String texte) throws SlackApiException, IOException {
-        return client.chatPostMessage(req -> req.channel(CHANNEL).text(texte));
+        return client.chatPostMessage(req -> req.channel(slackProperties.getChannel()).text(texte));
     }
 
 }
