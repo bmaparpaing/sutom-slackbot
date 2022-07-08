@@ -37,7 +37,7 @@ public class Runner implements CommandLineRunner {
         List<SutomPartage> slackPartages = sutomPartageService.readTodayConversationFromSlackApi();
         if (!slackPartages.isEmpty()) {
             List<SutomPartage> podium = podiumJourService.sortSutomPartages(slackPartages);
-            String text = podiumJourService.podiumJourPrettyPrint(podium);
+            String text = podiumJourService.podiumJourTodayPrettyPrint(podium);
             slackService.postMessage(text);
         }
     }

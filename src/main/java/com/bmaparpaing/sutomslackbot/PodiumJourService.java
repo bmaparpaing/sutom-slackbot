@@ -22,11 +22,15 @@ public class PodiumJourService {
         return sutomPartages;
     }
 
-    public String podiumJourPrettyPrint(List<SutomPartage> sutomPartages) {
+    public String podiumJourTodayPrettyPrint(List<SutomPartage> sutomPartages) {
+        return podiumJourPrettyPrint(sutomPartages, Instant.now());
+    }
+
+    public String podiumJourPrettyPrint(List<SutomPartage> sutomPartages, Instant instant) {
         var sb = new StringBuilder();
         for (int i = 0; i < sutomPartages.size(); i++) {
             switch (i) {
-                case 0 -> sb.append("*SUTOM du ").append(FULL_TEXT_DATE_FORMATTER.format(Instant.now())).append("*\n")
+                case 0 -> sb.append("*SUTOM du ").append(FULL_TEXT_DATE_FORMATTER.format(instant)).append("*\n")
                     .append("\n:trophy: *").append(sutomPartages.get(i).joueur().nom()).append("*");
                 case 1 -> sb.append("\n:second_place_medal: ").append(sutomPartages.get(i).joueur().nom());
                 case 2 -> sb.append("\n:third_place_medal: ").append(sutomPartages.get(i).joueur().nom());

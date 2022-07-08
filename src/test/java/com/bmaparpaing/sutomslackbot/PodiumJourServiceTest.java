@@ -40,14 +40,14 @@ class PodiumJourServiceTest {
     }
 
     @Test
-    void podiumJourPrettyPrint_givenEmptyList_shouldReturnEmptyString() {
-        var result = podiumJourService.podiumJourPrettyPrint(Collections.emptyList());
+    void podiumJourTodayPrettyPrint_givenEmptyList_shouldReturnEmptyString() {
+        var result = podiumJourService.podiumJourTodayPrettyPrint(Collections.emptyList());
 
         assertThat(result).isEmpty();
     }
 
     @Test
-    void podiumJourPrettyPrint_givenListOfSutomPartages_shouldReturnPodiumPrettyPrint() {
+    void podiumJourTodayPrettyPrint_givenListOfSutomPartages_shouldReturnPodiumPrettyPrint() {
         var partage1 = new SutomPartage(new Joueur("1", "Joueur 1"),
             Instant.now(), 3, 12, 4);
         var partage2 = new SutomPartage(new Joueur("2", "Joueur 2"),
@@ -59,7 +59,7 @@ class PodiumJourServiceTest {
         var partage5 = new SutomPartage(new Joueur("5", "Joueur 5"),
             Instant.now(), 2, 8, 1);
 
-        var result = podiumJourService.podiumJourPrettyPrint(
+        var result = podiumJourService.podiumJourTodayPrettyPrint(
             Arrays.asList(partage1, partage2, partage3, partage4, partage5));
 
         assertThat(result).isEqualTo("""
@@ -70,6 +70,41 @@ class PodiumJourServiceTest {
             :third_place_medal: Joueur 3
                         
             4. Joueur 4  5. Joueur 5""".formatted(FULL_TEXT_DATE_FORMATTER.format(Instant.now())));
+    }
+
+    @Test
+    void podiumJourPrettyPrint_givenEmptyList_shouldReturnEmptyString() {
+        var result = podiumJourService.podiumJourPrettyPrint(Collections.emptyList(), null);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void podiumJourPrettyPrint_givenListOfSutomPartagesAndInstant_shouldReturnPodiumPrettyPrintOfDay() {
+        var partage1 = new SutomPartage(new Joueur("1", "Joueur 1"),
+            Instant.now(), 3, 12, 4);
+        var partage2 = new SutomPartage(new Joueur("2", "Joueur 2"),
+            Instant.now(), 1, 6, 0);
+        var partage3 = new SutomPartage(new Joueur("3", "Joueur 3"),
+            Instant.now(), 2, 8, 1);
+        var partage4 = new SutomPartage(new Joueur("4", "Joueur 4"),
+            Instant.now(), 2, 7, 4);
+        var partage5 = new SutomPartage(new Joueur("5", "Joueur 5"),
+            Instant.now(), 2, 8, 1);
+        var instant = Instant.parse("2022-07-08T12:00:00.00Z");
+
+        var result = podiumJourService.podiumJourPrettyPrint(
+            Arrays.asList(partage1, partage2, partage3, partage4, partage5),
+            instant);
+
+        assertThat(result).isEqualTo("""
+            *SUTOM du vendredi 8 juillet*
+                        
+            :trophy: *Joueur 1*
+            :second_place_medal: Joueur 2
+            :third_place_medal: Joueur 3
+                        
+            4. Joueur 4  5. Joueur 5""");
     }
 
 }
