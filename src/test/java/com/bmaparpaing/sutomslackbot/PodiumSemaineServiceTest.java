@@ -96,7 +96,7 @@ class PodiumSemaineServiceTest {
             List.of(Set.of(joueur1), Set.of(joueur2), Set.of(joueur3), Set.of(joueur4), Set.of(joueur5)));
 
         assertThat(result).isEqualTo("""
-            SUTOM
+            *SUTOM classement semaine*
                         
             :trophy: *Joueur UN*
             :second_place_medal: Joueur DEUX
@@ -119,7 +119,7 @@ class PodiumSemaineServiceTest {
             new LinkedHashSet<>(List.of(joueur4, joueur5))));
 
         assertThat(result).isEqualTo("""
-            SUTOM
+            *SUTOM classement semaine*
                         
             :trophy: *Joueur UN*
             :second_place_medal: Joueur DEUX

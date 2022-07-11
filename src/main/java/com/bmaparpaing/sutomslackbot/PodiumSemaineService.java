@@ -41,7 +41,7 @@ public class PodiumSemaineService {
     }
 
     public String podiumSemainePrettyPrint(List<Set<Joueur>> podiumSemaine) {
-        var sb = new StringBuilder(podiumSemaine.isEmpty() ? "" : "SUTOM\n");
+        var sb = new StringBuilder(podiumSemaine.isEmpty() ? "" : "*SUTOM classement semaine*\n");
         int i = 0;
         for (Set<Joueur> joueurs : podiumSemaine) {
             for (Joueur joueur : joueurs) {
