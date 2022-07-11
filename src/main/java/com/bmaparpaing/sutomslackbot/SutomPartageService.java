@@ -61,6 +61,17 @@ public class SutomPartageService {
     public List<SutomPartage> readTodayConversationFromSlackApi()
         throws SlackApiException, IOException {
         List<Message> messages = slackService.fetchTodayConversation();
+        return getSutomPartagesFromMessages(messages);
+    }
+
+    public List<SutomPartage> readConversationOfDayFromSlackApi(Instant instant)
+        throws SlackApiException, IOException {
+        List<Message> messages = slackService.fetchConversationOfDay(instant);
+        return getSutomPartagesFromMessages(messages);
+    }
+
+    private List<SutomPartage> getSutomPartagesFromMessages(List<Message> messages)
+        throws SlackApiException, IOException {
         List<SutomPartage> partages = new ArrayList<>();
         for (Message message : messages) {
             if (COUP_PATTERN.matcher(message.getText()).find()) {

@@ -14,8 +14,12 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (args != null && args.length > 0 && "jour".equalsIgnoreCase(args[0])) {
-            podiumController.computeAndPostPodiumJour();
+        if (args != null && args.length > 0) {
+            if ("jour".equalsIgnoreCase(args[0])) {
+                podiumController.computeAndPostPodiumJour();
+            } else if ("semaine".equalsIgnoreCase(args[0])) {
+                podiumController.computeAndPostPodiumSemaine();
+            }
         }
     }
 
