@@ -16,11 +16,12 @@ public class PodiumJourService {
         DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.of("Europe/Paris")).withLocale(Locale.FRANCE);
 
     public List<SutomPartage> sortSutomPartages(List<SutomPartage> sutomPartages) {
-        sutomPartages.sort(Comparator.comparingInt(SutomPartage::coup)
-            .thenComparingInt(SutomPartage::lettreCorrecte)
-            .thenComparingInt(SutomPartage::lettreMalPlacee)
-            .thenComparing(SutomPartage::timestamp));
-        return sutomPartages;
+        return sutomPartages.stream()
+            .sorted(Comparator.comparingInt(SutomPartage::coup)
+                .thenComparingInt(SutomPartage::lettreCorrecte)
+                .thenComparingInt(SutomPartage::lettreMalPlacee)
+                .thenComparing(SutomPartage::timestamp))
+            .toList();
     }
 
     public String podiumJourTodayPrettyPrint(List<SutomPartage> sutomPartages) {

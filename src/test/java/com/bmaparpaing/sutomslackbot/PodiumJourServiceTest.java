@@ -3,8 +3,8 @@ package com.bmaparpaing.sutomslackbot;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static com.bmaparpaing.sutomslackbot.PodiumJourService.FULL_TEXT_DATE_FORMATTER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +34,7 @@ class PodiumJourServiceTest {
             Instant.now(), 2, 8, 1);
 
         var result = podiumJourService.sortSutomPartages(
-            Arrays.asList(partage1, partage2, partage3, partage4, partage5));
+            List.of(partage1, partage2, partage3, partage4, partage5));
 
         assertThat(result).containsExactly(partage2, partage4, partage3, partage5, partage1);
     }
@@ -60,7 +60,7 @@ class PodiumJourServiceTest {
             Instant.now(), 2, 8, 1);
 
         var result = podiumJourService.podiumJourTodayPrettyPrint(
-            Arrays.asList(partage1, partage2, partage3, partage4, partage5));
+            List.of(partage1, partage2, partage3, partage4, partage5));
 
         assertThat(result).isEqualTo("""
             *SUTOM du %s*
@@ -94,7 +94,7 @@ class PodiumJourServiceTest {
         var instant = Instant.parse("2022-07-08T12:00:00.00Z");
 
         var result = podiumJourService.podiumJourPrettyPrint(
-            Arrays.asList(partage1, partage2, partage3, partage4, partage5),
+            List.of(partage1, partage2, partage3, partage4, partage5),
             instant);
 
         assertThat(result).isEqualTo("""
