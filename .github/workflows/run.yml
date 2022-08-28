@@ -2,14 +2,14 @@ name: Run app
 
 on:
   schedule:
-  - cron: '25 15 * * 1-5'
-  - cron: '45 15 * * 5'
+  - cron: '25 15 * * 1-4'
+  - cron: '25 15 * * 5'
 
 jobs:
   podium-jour:
 
     runs-on: ubuntu-latest
-    if: github.event.schedule == '25 15 * * 1-5'
+    if: github.event.schedule == '25 15 * * 1-4'
 
     steps:
     - uses: actions/checkout@v3
@@ -28,7 +28,7 @@ jobs:
   podium-semaine:
 
     runs-on: ubuntu-latest
-    if: github.event.schedule == '45 15 * * 5'
+    if: github.event.schedule == '25 15 * * 5'
 
     steps:
     - uses: actions/checkout@v3
@@ -38,6 +38,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Run podium jour with Maven
+      run: mvn spring-boot:run -Dspring-boot.run.arguments="jour"
+      env:
+        SLACK_TOKEN: ${{ secrets.SlackToken }}
+        SLACK_CHANNEL: ${{ secrets.SlackChannel }}
     - name: Run podium semaine with Maven
       run: mvn spring-boot:run -Dspring-boot.run.arguments="semaine"
       env:
