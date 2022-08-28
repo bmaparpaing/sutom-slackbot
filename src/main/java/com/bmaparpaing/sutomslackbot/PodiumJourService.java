@@ -13,7 +13,7 @@ import java.util.Locale;
 public class PodiumJourService {
 
     public static final DateTimeFormatter FULL_TEXT_DATE_FORMATTER =
-        DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.systemDefault()).withLocale(Locale.FRANCE);
+        DateTimeFormatter.ofPattern("EEEE d LLLL").withZone(ZoneId.of("Europe/Paris")).withLocale(Locale.FRANCE);
 
     public List<SutomPartage> sortSutomPartages(List<SutomPartage> sutomPartages) {
         sutomPartages.sort(Comparator.comparingInt(SutomPartage::coup)
