@@ -11,9 +11,13 @@ import com.slack.api.methods.response.conversations.ConversationsHistoryResponse
 import com.slack.api.methods.response.users.UsersInfoResponse;
 import com.slack.api.model.Message;
 import com.slack.api.model.ResponseMetadata;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -21,7 +25,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static com.bmaparpaing.sutomslackbot.SlackProperties.DEFAULT_FETCH_LIMIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -31,15 +34,18 @@ class SlackServiceTest {
     @Mock
     private MethodsClient client;
 
-    @Mock
-    private SlackProperties slackProperties;
+    private final SlackProperties slackProperties = new SlackProperties();
 
-    @InjectMocks
     private SlackService slackService;
 
     @Captor
     private ArgumentCaptor<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>
         requestBuilderLambdaCaptor;
+
+    @BeforeEach
+    void setUp() {
+        slackService = new SlackService(client, slackProperties);
+    }
 
     @Test
     void fetchTodayConversation_shouldReturnTodayMessages() throws SlackApiException, IOException {
@@ -47,7 +53,6 @@ class SlackServiceTest {
         var conversation = new ConversationsHistoryResponse();
         conversation.setMessages(List.of(message));
         conversation.setHasMore(false);
-        when(slackProperties.getFetchLimit()).thenReturn(DEFAULT_FETCH_LIMIT);
         when(client.conversationsHistory(
             ArgumentMatchers.<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>any()
         )).thenReturn(conversation);
@@ -65,7 +70,7 @@ class SlackServiceTest {
                 ConversationsHistoryRequest::getOldest,
                 ConversationsHistoryRequest::getLatest)
             .containsExactly(
-                DEFAULT_FETCH_LIMIT,
+                slackProperties.getFetchLimit(),
                 String.valueOf(Instant.now().truncatedTo(ChronoUnit.DAYS).getEpochSecond()),
                 null
             );
@@ -145,7 +150,6 @@ class SlackServiceTest {
         var conversation = new ConversationsHistoryResponse();
         conversation.setMessages(List.of(message));
         conversation.setHasMore(false);
-        when(slackProperties.getFetchLimit()).thenReturn(DEFAULT_FETCH_LIMIT);
         when(client.conversationsHistory(
             ArgumentMatchers.<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>any()
         )).thenReturn(conversation);
@@ -164,7 +168,7 @@ class SlackServiceTest {
                 ConversationsHistoryRequest::getOldest,
                 ConversationsHistoryRequest::getLatest)
             .containsExactly(
-                DEFAULT_FETCH_LIMIT,
+                slackProperties.getFetchLimit(),
                 String.valueOf(Instant.parse("2022-07-01T00:00:00.00Z").getEpochSecond()),
                 String.valueOf(Instant.parse("2022-07-02T00:00:00.00Z").getEpochSecond())
             );
