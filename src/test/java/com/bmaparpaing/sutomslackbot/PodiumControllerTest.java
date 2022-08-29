@@ -1,9 +1,9 @@
 package com.bmaparpaing.sutomslackbot;
 
 import com.slack.api.methods.SlackApiException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -29,12 +29,19 @@ class PodiumControllerTest {
     @Mock
     private SlackService slackService;
 
-    @InjectMocks
+    private final SutomSlackbotProperties sutomSlackbotProperties = new SutomSlackbotProperties();
+
     private PodiumController podiumController;
+
+    @BeforeEach
+    void setUp() {
+        podiumController = new PodiumController(podiumJourService, podiumSemaineService, sutomPartageService,
+            slackService, sutomSlackbotProperties);
+    }
 
     @Test
     void computeAndPostPodiumJour_givenEmptyTodayConversation_shouldDoNothing() throws SlackApiException, IOException {
-        when(sutomPartageService.readTodayConversationFromSlackApi()).thenReturn(Collections.emptyList());
+        when(sutomPartageService.readConversationOfDayFromSlackApi(any())).thenReturn(Collections.emptyList());
 
         podiumController.computeAndPostPodiumJour();
 
@@ -49,9 +56,9 @@ class PodiumControllerTest {
         var partages = List.of(new SutomPartage(new Joueur("1", "Joueur 1"),
             Instant.now(), 3, 12, 4));
         var podium = "PODIUM TEST JOUR";
-        when(sutomPartageService.readTodayConversationFromSlackApi()).thenReturn(partages);
+        when(sutomPartageService.readConversationOfDayFromSlackApi(any())).thenReturn(partages);
         when(podiumJourService.sortSutomPartages(partages)).thenReturn(partages);
-        when(podiumJourService.podiumJourTodayPrettyPrint(partages)).thenReturn(podium);
+        when(podiumJourService.podiumJourPrettyPrint(eq(partages), any())).thenReturn(podium);
 
         podiumController.computeAndPostPodiumJour();
 

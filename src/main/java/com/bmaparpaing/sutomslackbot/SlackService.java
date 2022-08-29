@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,10 @@ public class SlackService {
         return fetchConversation(todayTimestamp, null);
     }
 
-    public List<Message> fetchConversationOfDay(Instant instant) throws SlackApiException, IOException {
-        var oldest = instant.truncatedTo(ChronoUnit.DAYS);
+    public List<Message> fetchConversationOfDay(ZonedDateTime zonedDateTime) throws SlackApiException, IOException {
+        var oldest = zonedDateTime.truncatedTo(ChronoUnit.DAYS);
         var latest = oldest.plus(1, ChronoUnit.DAYS);
-        return fetchConversation(String.valueOf(oldest.getEpochSecond()), String.valueOf(latest.getEpochSecond()));
+        return fetchConversation(String.valueOf(oldest.toEpochSecond()), String.valueOf(latest.toEpochSecond()));
     }
 
     private List<Message> fetchConversation(String oldest, String latest) throws SlackApiException, IOException {

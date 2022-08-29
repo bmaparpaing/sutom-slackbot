@@ -3,15 +3,19 @@ package com.bmaparpaing.sutomslackbot;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
-import static com.bmaparpaing.sutomslackbot.PodiumJourService.FULL_TEXT_DATE_FORMATTER;
+import static com.bmaparpaing.sutomslackbot.PodiumJourService.FULL_TEXT_LOCAL_DATE_PATTERN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PodiumJourServiceTest {
 
-    private final PodiumJourService podiumJourService = new PodiumJourService();
+    private final SutomSlackbotProperties sutomSlackbotProperties = new SutomSlackbotProperties();
+    private final PodiumJourService podiumJourService = new PodiumJourService(sutomSlackbotProperties);
 
     @Test
     void sortSutomPartages_givenEmptyList_shouldReturnEmptyList() {
@@ -69,7 +73,8 @@ class PodiumJourServiceTest {
             :second_place_medal: Joueur 2
             :third_place_medal: Joueur 3
                         
-            4. Joueur 4  5. Joueur 5""".formatted(FULL_TEXT_DATE_FORMATTER.format(Instant.now())));
+            4. Joueur 4  5. Joueur 5""".formatted(
+            DateTimeFormatter.ofPattern(FULL_TEXT_LOCAL_DATE_PATTERN).format(ZonedDateTime.now())));
     }
 
     @Test
@@ -91,11 +96,12 @@ class PodiumJourServiceTest {
             Instant.now(), 2, 7, 4);
         var partage5 = new SutomPartage(new Joueur("5", "Joueur 5"),
             Instant.now(), 2, 8, 1);
-        var instant = Instant.parse("2022-07-08T12:00:00.00Z");
+        var zonedDateTime = Instant.parse("2022-07-07T23:00:00.00Z")
+            .atZone(ZoneId.of(sutomSlackbotProperties.getTimeZone()));
 
         var result = podiumJourService.podiumJourPrettyPrint(
             List.of(partage1, partage2, partage3, partage4, partage5),
-            instant);
+            zonedDateTime);
 
         assertThat(result).isEqualTo("""
             *SUTOM du vendredi 8 juillet*

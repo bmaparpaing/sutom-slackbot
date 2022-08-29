@@ -5,8 +5,8 @@ import com.slack.api.methods.SlackApiException;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -21,34 +21,39 @@ public class PodiumController {
 
     private final SlackService slackService;
 
+    private final SutomSlackbotProperties sutomSlackbotProperties;
+
     public PodiumController(
         PodiumJourService podiumJourService,
         PodiumSemaineService podiumSemaineService,
         SutomPartageService sutomPartageService,
-        SlackService slackService
+        SlackService slackService,
+        SutomSlackbotProperties sutomSlackbotProperties
     ) {
         this.podiumJourService = podiumJourService;
         this.podiumSemaineService = podiumSemaineService;
         this.sutomPartageService = sutomPartageService;
         this.slackService = slackService;
+        this.sutomSlackbotProperties = sutomSlackbotProperties;
     }
 
     public void computeAndPostPodiumJour() throws SlackApiException, IOException {
-        List<SutomPartage> slackPartages = sutomPartageService.readTodayConversationFromSlackApi();
+        var zonedNow = ZonedDateTime.now(ZoneId.of(sutomSlackbotProperties.getTimeZone()));
+        List<SutomPartage> slackPartages = sutomPartageService.readConversationOfDayFromSlackApi(zonedNow);
         if (!slackPartages.isEmpty()) {
             List<SutomPartage> podium = podiumJourService.sortSutomPartages(slackPartages);
-            String text = podiumJourService.podiumJourTodayPrettyPrint(podium);
+            String text = podiumJourService.podiumJourPrettyPrint(podium, zonedNow);
             slackService.postMessage(text);
         }
     }
 
     public void computeAndPostPodiumSemaine() throws SlackApiException, IOException {
-        Instant now = Instant.now();
-        int dayOfWeek = now.atZone(ZoneId.of("Europe/Paris")).getDayOfWeek().getValue();
+        var zonedNow = ZonedDateTime.now(ZoneId.of(sutomSlackbotProperties.getTimeZone()));
+        int dayOfWeek = zonedNow.getDayOfWeek().getValue();
         List<List<SutomPartage>> podiumJours = new ArrayList<>();
         for (int i = 0; i < dayOfWeek; i++) {
             List<SutomPartage> slackPartages = sutomPartageService.readConversationOfDayFromSlackApi(
-                now.minus(i, ChronoUnit.DAYS));
+                zonedNow.minus(i, ChronoUnit.DAYS));
             if (!slackPartages.isEmpty()) {
                 podiumJours.add(podiumJourService.sortSutomPartages(slackPartages));
             }

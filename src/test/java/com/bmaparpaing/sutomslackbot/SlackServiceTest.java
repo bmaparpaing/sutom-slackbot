@@ -22,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -154,9 +156,9 @@ class SlackServiceTest {
             ArgumentMatchers.<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>any()
         )).thenReturn(conversation);
         var builder = ConversationsHistoryRequest.builder();
-        var instant = Instant.parse("2022-07-01T12:10:01.00Z");
+        var zonedDateTime = Instant.parse("2022-07-01T23:10:01.00Z").atZone(ZoneId.of("Europe/Paris"));
 
-        List<Message> messages = slackService.fetchConversationOfDay(instant);
+        List<Message> messages = slackService.fetchConversationOfDay(zonedDateTime);
         verify(client).conversationsHistory(requestBuilderLambdaCaptor.capture());
         var lambda = requestBuilderLambdaCaptor.getValue();
         var request = lambda.configure(builder).build();
@@ -169,8 +171,12 @@ class SlackServiceTest {
                 ConversationsHistoryRequest::getLatest)
             .containsExactly(
                 slackProperties.getFetchLimit(),
-                String.valueOf(Instant.parse("2022-07-01T00:00:00.00Z").getEpochSecond()),
-                String.valueOf(Instant.parse("2022-07-02T00:00:00.00Z").getEpochSecond())
+                String.valueOf(LocalDate.parse("2022-07-02")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond()),
+                String.valueOf(LocalDate.parse("2022-07-03")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond())
             );
     }
 

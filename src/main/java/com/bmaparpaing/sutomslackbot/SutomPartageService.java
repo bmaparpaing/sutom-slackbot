@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -64,9 +65,9 @@ public class SutomPartageService {
         return getSutomPartagesFromMessages(messages);
     }
 
-    public List<SutomPartage> readConversationOfDayFromSlackApi(Instant instant)
+    public List<SutomPartage> readConversationOfDayFromSlackApi(ZonedDateTime zonedDateTime)
         throws SlackApiException, IOException {
-        List<Message> messages = slackService.fetchConversationOfDay(instant);
+        List<Message> messages = slackService.fetchConversationOfDay(zonedDateTime);
         return getSutomPartagesFromMessages(messages);
     }
 
