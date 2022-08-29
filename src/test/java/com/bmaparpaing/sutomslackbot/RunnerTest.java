@@ -41,8 +41,9 @@ class RunnerTest {
 
     @Test
     void run_givenUnrecognizedArgument_shouldDoNothing() throws Exception {
-        runner.run("SemAINe");
+        runner.run("oervQZniosn");
 
-        verify(podiumController, only()).computeAndPostPodiumSemaine();
+        verify(podiumController, never()).computeAndPostPodiumJour();
+        verify(podiumController, never()).computeAndPostPodiumSemaine();
     }
 }
