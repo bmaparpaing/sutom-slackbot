@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static com.bmaparpaing.sutomslackbot.PodiumJourService.FULL_TEXT_LOCAL_DATE_PATTERN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +75,8 @@ class PodiumJourServiceTest {
             :third_place_medal: Joueur 3
                         
             4. Joueur 4  5. Joueur 5""".formatted(
-            DateTimeFormatter.ofPattern(FULL_TEXT_LOCAL_DATE_PATTERN).format(ZonedDateTime.now())));
+            DateTimeFormatter.ofPattern(FULL_TEXT_LOCAL_DATE_PATTERN)
+                .withLocale(Locale.forLanguageTag(sutomSlackbotProperties.getLocale())).format(ZonedDateTime.now())));
     }
 
     @Test
