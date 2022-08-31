@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,36 +49,7 @@ class SlackServiceTest {
     }
 
     @Test
-    void fetchTodayConversation_shouldReturnTodayMessages() throws SlackApiException, IOException {
-        var message = new Message();
-        var conversation = new ConversationsHistoryResponse();
-        conversation.setMessages(List.of(message));
-        conversation.setHasMore(false);
-        when(client.conversationsHistory(
-            ArgumentMatchers.<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>any()
-        )).thenReturn(conversation);
-        var builder = ConversationsHistoryRequest.builder();
-
-        var result = slackService.fetchTodayConversation();
-        verify(client).conversationsHistory(requestBuilderLambdaCaptor.capture());
-        var lambda = requestBuilderLambdaCaptor.getValue();
-        var request = lambda.configure(builder).build();
-
-        assertThat(result).containsExactly(message);
-        assertThat(request)
-            .extracting(
-                ConversationsHistoryRequest::getLimit,
-                ConversationsHistoryRequest::getOldest,
-                ConversationsHistoryRequest::getLatest)
-            .containsExactly(
-                slackProperties.getFetchLimit(),
-                String.valueOf(Instant.now().truncatedTo(ChronoUnit.DAYS).getEpochSecond()),
-                null
-            );
-    }
-
-    @Test
-    void fetchTodayConversation_givenMultiplePageResponse_shouldReturnTodayMessages()
+    void fetchConversationOfDay_givenMultiplePageResponse_shouldReturnAllMessagesOfDay()
         throws SlackApiException, IOException {
         var message1 = new Message();
         var conversation1 = new ConversationsHistoryResponse();
@@ -105,8 +75,9 @@ class SlackServiceTest {
         var builder1 = ConversationsHistoryRequest.builder();
         var builder2 = ConversationsHistoryRequest.builder();
         var builder3 = ConversationsHistoryRequest.builder();
+        var zonedDateTime = Instant.parse("2022-07-01T23:10:01.00Z").atZone(ZoneId.of("Europe/Paris"));
 
-        var result = slackService.fetchTodayConversation();
+        var result = slackService.fetchConversationOfDay(zonedDateTime);
         verify(client, times(3)).conversationsHistory(requestBuilderLambdaCaptor.capture());
         var lambdas = requestBuilderLambdaCaptor.getAllValues();
         var request1 = lambdas.get(0).configure(builder1).build();
@@ -120,8 +91,12 @@ class SlackServiceTest {
                 ConversationsHistoryRequest::getLatest,
                 ConversationsHistoryRequest::getCursor)
             .containsExactly(
-                String.valueOf(Instant.now().truncatedTo(ChronoUnit.DAYS).getEpochSecond()),
-                null,
+                String.valueOf(LocalDate.parse("2022-07-02")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond()),
+                String.valueOf(LocalDate.parse("2022-07-03")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond()),
                 null
             );
         assertThat(request2)
@@ -130,8 +105,12 @@ class SlackServiceTest {
                 ConversationsHistoryRequest::getLatest,
                 ConversationsHistoryRequest::getCursor)
             .containsExactly(
-                String.valueOf(Instant.now().truncatedTo(ChronoUnit.DAYS).getEpochSecond()),
-                null,
+                String.valueOf(LocalDate.parse("2022-07-02")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond()),
+                String.valueOf(LocalDate.parse("2022-07-03")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond()),
                 "epzcvbsdf"
             );
         assertThat(request3)
@@ -140,8 +119,12 @@ class SlackServiceTest {
                 ConversationsHistoryRequest::getLatest,
                 ConversationsHistoryRequest::getCursor)
             .containsExactly(
-                String.valueOf(Instant.now().truncatedTo(ChronoUnit.DAYS).getEpochSecond()),
-                null,
+                String.valueOf(LocalDate.parse("2022-07-02")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond()),
+                String.valueOf(LocalDate.parse("2022-07-03")
+                    .atStartOfDay(ZoneId.of("Europe/Paris"))
+                    .toEpochSecond()),
                 "sodujeoih"
             );
     }
@@ -159,7 +142,7 @@ class SlackServiceTest {
         var zonedDateTime = Instant.parse("2022-07-01T23:10:01.00Z").atZone(ZoneId.of("Europe/Paris"));
 
         List<Message> messages = slackService.fetchConversationOfDay(zonedDateTime);
-        verify(client).conversationsHistory(requestBuilderLambdaCaptor.capture());
+        verify(client, times(1)).conversationsHistory(requestBuilderLambdaCaptor.capture());
         var lambda = requestBuilderLambdaCaptor.getValue();
         var request = lambda.configure(builder).build();
 

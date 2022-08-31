@@ -9,7 +9,6 @@ import com.slack.api.model.Message;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -24,11 +23,6 @@ public class SlackService {
     public SlackService(MethodsClient client, SlackProperties slackProperties) {
         this.client = client;
         this.slackProperties = slackProperties;
-    }
-
-    public List<Message> fetchTodayConversation() throws SlackApiException, IOException {
-        String todayTimestamp = String.valueOf(Instant.now().truncatedTo(ChronoUnit.DAYS).getEpochSecond());
-        return fetchConversation(todayTimestamp, null);
     }
 
     public List<Message> fetchConversationOfDay(ZonedDateTime zonedDateTime) throws SlackApiException, IOException {
