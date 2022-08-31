@@ -60,18 +60,18 @@ class SutomPartageServiceTest {
     }
 
     @Test
-    void readConversationOfDayFromSlackApi_givenEmptyConversation_shouldReturnEmptyList()
+    void readConversationFromSlackApiOfDay_givenEmptyConversation_shouldReturnEmptyList()
         throws SlackApiException, IOException {
         var zonedDateTime = ZonedDateTime.now();
         when(slackService.fetchConversationOfDay(zonedDateTime)).thenReturn(Collections.emptyList());
 
-        var result = sutomPartageService.readConversationOfDayFromSlackApi(zonedDateTime);
+        var result = sutomPartageService.readConversationFromSlackApiOfDay(zonedDateTime);
 
         assertThat(result).isEmpty();
     }
 
     @Test
-    void readConversationOfDayFromSlackApi_givenConversation_shouldReturnSutomPartageList()
+    void readConversationFromSlackApiOfDay_givenConversation_shouldReturnSutomPartageList()
         throws SlackApiException, IOException {
         var message1 = new Message();
         message1.setUser("A1");
@@ -94,7 +94,7 @@ class SutomPartageServiceTest {
         when(slackService.fetchUserInfo(message1.getUser())).thenReturn(userInfo1);
         when(slackService.fetchUserInfo(message2.getUser())).thenReturn(userInfo2);
 
-        var result = sutomPartageService.readConversationOfDayFromSlackApi(zonedDateTime);
+        var result = sutomPartageService.readConversationFromSlackApiOfDay(zonedDateTime);
 
         assertThat(result).containsExactly(
             new SutomPartage(new Joueur(message1.getUser(), user1.getRealName()),

@@ -59,7 +59,7 @@ public class SutomPartageService {
         return sb.toString();
     }
 
-    public List<SutomPartage> readConversationOfDayFromSlackApi(ZonedDateTime zonedDateTime)
+    public List<SutomPartage> readConversationFromSlackApiOfDay(ZonedDateTime zonedDateTime)
         throws SlackApiException, IOException {
         List<Message> messages = slackService.fetchConversationOfDay(zonedDateTime);
         return getSutomPartagesFromMessages(messages);

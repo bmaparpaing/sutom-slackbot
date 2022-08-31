@@ -41,7 +41,7 @@ class PodiumControllerTest {
 
     @Test
     void computeAndPostPodiumJour_givenEmptyTodayConversation_shouldDoNothing() throws SlackApiException, IOException {
-        when(sutomPartageService.readConversationOfDayFromSlackApi(any())).thenReturn(Collections.emptyList());
+        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(Collections.emptyList());
 
         podiumController.computeAndPostPodiumJour();
 
@@ -56,7 +56,7 @@ class PodiumControllerTest {
         var partages = List.of(new SutomPartage(new Joueur("1", "Joueur 1"),
             Instant.now(), 3, 12, 4));
         var podium = "PODIUM TEST JOUR";
-        when(sutomPartageService.readConversationOfDayFromSlackApi(any())).thenReturn(partages);
+        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(partages);
         when(podiumJourService.sortSutomPartages(partages)).thenReturn(partages);
         when(podiumJourService.podiumJourPrettyPrint(eq(partages), any())).thenReturn(podium);
 
@@ -68,7 +68,7 @@ class PodiumControllerTest {
     @Test
     void computeAndPostPodiumSemaine_givenEmptyConversation_shouldDoNothing()
         throws SlackApiException, IOException {
-        when(sutomPartageService.readConversationOfDayFromSlackApi(any())).thenReturn(Collections.emptyList());
+        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(Collections.emptyList());
 
         podiumController.computeAndPostPodiumSemaine();
 
@@ -86,7 +86,7 @@ class PodiumControllerTest {
             Instant.now(), 3, 12, 4));
         var podium = "PODIUM TEST SEMAINE";
 
-        when(sutomPartageService.readConversationOfDayFromSlackApi(any())).thenReturn(partages);
+        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(partages);
         when(podiumJourService.sortSutomPartages(partages)).thenReturn(partages);
         when(podiumSemaineService.computeScoreSemaine(any())).thenReturn(Collections.emptyMap());
         when(podiumSemaineService.sortScoreSemaine(any())).thenReturn(Collections.emptyList());
@@ -94,7 +94,7 @@ class PodiumControllerTest {
 
         podiumController.computeAndPostPodiumSemaine();
 
-        verify(sutomPartageService, atLeastOnce()).readConversationOfDayFromSlackApi(any());
+        verify(sutomPartageService, atLeastOnce()).readConversationFromSlackApiOfDay(any());
         verify(slackService, times(1)).postMessage(podium);
     }
 }

@@ -39,7 +39,7 @@ public class PodiumController {
 
     public void computeAndPostPodiumJour() throws SlackApiException, IOException {
         var zonedNow = ZonedDateTime.now(ZoneId.of(sutomSlackbotProperties.getTimeZone()));
-        List<SutomPartage> slackPartages = sutomPartageService.readConversationOfDayFromSlackApi(zonedNow);
+        List<SutomPartage> slackPartages = sutomPartageService.readConversationFromSlackApiOfDay(zonedNow);
         if (!slackPartages.isEmpty()) {
             List<SutomPartage> podium = podiumJourService.sortSutomPartages(slackPartages);
             String text = podiumJourService.podiumJourPrettyPrint(podium, zonedNow);
@@ -52,7 +52,7 @@ public class PodiumController {
         int dayOfWeek = zonedNow.getDayOfWeek().getValue();
         List<List<SutomPartage>> podiumJours = new ArrayList<>();
         for (int i = 0; i < dayOfWeek; i++) {
-            List<SutomPartage> slackPartages = sutomPartageService.readConversationOfDayFromSlackApi(
+            List<SutomPartage> slackPartages = sutomPartageService.readConversationFromSlackApiOfDay(
                 zonedNow.minus(i, ChronoUnit.DAYS));
             if (!slackPartages.isEmpty()) {
                 podiumJours.add(podiumJourService.sortSutomPartages(slackPartages));
