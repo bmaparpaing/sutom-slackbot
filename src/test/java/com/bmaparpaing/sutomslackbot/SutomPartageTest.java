@@ -25,8 +25,10 @@ class SutomPartageTest {
 
     @Test
     void newSutomPartage_withSutomPartage1Text_shouldCreateCorrectly() throws IOException {
-        var resourceStream = getClass().getClassLoader().getResourceAsStream(SUTOM_PARTAGE_1_PATH);
-        String sutomPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
+        String sutomPartage1;
+        try (var resourceStream = getClass().getClassLoader().getResourceAsStream(SUTOM_PARTAGE_1_PATH)) {
+            sutomPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
+        }
 
         var result = new SutomPartage(new Joueur("1", "Joueur1"), Instant.now(), new SutomPartageTexte(sutomPartage1));
 
@@ -39,8 +41,10 @@ class SutomPartageTest {
 
     @Test
     void newSutomPartage_withSutomPartage2Text_shouldCreateCorrectly() throws IOException {
-        var resourceStream = getClass().getClassLoader().getResourceAsStream(SUTOM_PARTAGE_2_PATH);
-        String sutomPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
+        String sutomPartage1;
+        try (var resourceStream = getClass().getClassLoader().getResourceAsStream(SUTOM_PARTAGE_2_PATH)) {
+            sutomPartage1 = resourceStream != null ? new String(resourceStream.readAllBytes()) : "";
+        }
 
         var result = new SutomPartage(new Joueur("1", "Joueur1"), Instant.now(), new SutomPartageTexte(sutomPartage1));
 
