@@ -29,10 +29,6 @@ public class PodiumJourService {
             .toList();
     }
 
-    public String podiumJourTodayPrettyPrint(List<SutomPartage> sutomPartages) {
-        return podiumJourPrettyPrint(sutomPartages, ZonedDateTime.now());
-    }
-
     public String podiumJourPrettyPrint(List<SutomPartage> sutomPartages, ZonedDateTime zonedDateTime) {
         var sb = new StringBuilder();
         for (int i = 0; i < sutomPartages.size(); i++) {
