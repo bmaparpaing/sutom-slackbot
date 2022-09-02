@@ -1,5 +1,8 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.sutom;
 
+import com.bmaparpaing.sutomslackbot.model.Joueur;
+import com.bmaparpaing.sutomslackbot.model.SutomPartage;
+import com.bmaparpaing.sutomslackbot.slack.SlackService;
 import com.slack.api.methods.SlackApiException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

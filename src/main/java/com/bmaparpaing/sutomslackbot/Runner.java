@@ -1,5 +1,7 @@
 package com.bmaparpaing.sutomslackbot;
 
+import com.bmaparpaing.sutomslackbot.config.SutomSlackbotProperties;
+import com.bmaparpaing.sutomslackbot.sutom.PodiumController;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

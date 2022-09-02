@@ -1,5 +1,8 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.sutom;
 
+import com.bmaparpaing.sutomslackbot.config.SutomSlackbotProperties;
+import com.bmaparpaing.sutomslackbot.model.Joueur;
+import com.bmaparpaing.sutomslackbot.model.SutomPartage;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

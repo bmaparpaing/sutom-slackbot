@@ -1,5 +1,9 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.sutom;
 
+import com.bmaparpaing.sutomslackbot.model.Joueur;
+import com.bmaparpaing.sutomslackbot.model.SutomPartage;
+import com.bmaparpaing.sutomslackbot.model.SutomPartageTexte;
+import com.bmaparpaing.sutomslackbot.slack.SlackService;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.users.UsersInfoResponse;
 import com.slack.api.model.Message;

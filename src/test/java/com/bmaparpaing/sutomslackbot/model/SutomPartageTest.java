@@ -1,4 +1,4 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.model;
 
 import org.junit.jupiter.api.Test;
 

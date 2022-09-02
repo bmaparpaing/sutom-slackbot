@@ -1,4 +1,4 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.config;
 
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;

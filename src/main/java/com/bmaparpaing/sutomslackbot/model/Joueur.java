@@ -1,4 +1,4 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.model;
 
 public record Joueur(String id, String nom) {
 }

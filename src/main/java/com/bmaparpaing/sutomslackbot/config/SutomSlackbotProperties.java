@@ -1,4 +1,4 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

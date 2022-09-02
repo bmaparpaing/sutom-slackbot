@@ -1,5 +1,9 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.sutom;
 
+import com.bmaparpaing.sutomslackbot.model.Joueur;
+import com.bmaparpaing.sutomslackbot.model.SutomPartage;
+import com.bmaparpaing.sutomslackbot.model.SutomPartageTexte;
+import com.bmaparpaing.sutomslackbot.slack.SlackService;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.users.UsersInfoResponse;
 import com.slack.api.model.Message;
@@ -15,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.bmaparpaing.sutomslackbot.SutomPartageTexte.COUP_PATTERN;
+import static com.bmaparpaing.sutomslackbot.model.SutomPartageTexte.COUP_PATTERN;
 
 @Service
 public class SutomPartageService {

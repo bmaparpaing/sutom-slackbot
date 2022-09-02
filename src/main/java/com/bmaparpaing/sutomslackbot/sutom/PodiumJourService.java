@@ -1,5 +1,7 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.sutom;
 
+import com.bmaparpaing.sutomslackbot.config.SutomSlackbotProperties;
+import com.bmaparpaing.sutomslackbot.model.SutomPartage;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;

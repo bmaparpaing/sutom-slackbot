@@ -1,5 +1,6 @@
-package com.bmaparpaing.sutomslackbot;
+package com.bmaparpaing.sutomslackbot.slack;
 
+import com.bmaparpaing.sutomslackbot.config.SlackProperties;
 import com.slack.api.RequestConfigurator;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;

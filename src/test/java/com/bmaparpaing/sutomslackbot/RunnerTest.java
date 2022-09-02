@@ -1,5 +1,7 @@
 package com.bmaparpaing.sutomslackbot;
 
+import com.bmaparpaing.sutomslackbot.config.SutomSlackbotProperties;
+import com.bmaparpaing.sutomslackbot.sutom.PodiumController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
