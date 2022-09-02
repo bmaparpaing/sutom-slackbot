@@ -2,12 +2,29 @@ package com.bmaparpaing.sutomslackbot;
 
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 public class PodiumSemaineService {
+
+    public static final String DAY_MONTH_DATE_PATTERN = "dd/MM";
+    public static final String DAY_MONTH_YEAR_DATE_PATTERN = "dd/MM/yy";
+
+    private final DateTimeFormatter dayMonthDateFormatter;
+
+    private final DateTimeFormatter dayMonthYearDateFormatter;
+
+    public PodiumSemaineService(SutomSlackbotProperties sutomSlackbotProperties) {
+        dayMonthDateFormatter = DateTimeFormatter.ofPattern(DAY_MONTH_DATE_PATTERN)
+            .withLocale(Locale.forLanguageTag(sutomSlackbotProperties.getLocale()));
+        dayMonthYearDateFormatter = DateTimeFormatter.ofPattern(DAY_MONTH_YEAR_DATE_PATTERN)
+            .withLocale(Locale.forLanguageTag(sutomSlackbotProperties.getLocale()));
+    }
 
     public Map<Joueur, int[]> computeScoreSemaine(List<List<SutomPartage>> podiumJours) {
         Integer[] nombreJoueurs = podiumJours.stream().map(List::size).toArray(Integer[]::new);
@@ -40,8 +57,15 @@ public class PodiumSemaineService {
             .toList();
     }
 
-    public String podiumSemainePrettyPrint(List<Set<Joueur>> podiumSemaine) {
-        var sb = new StringBuilder(podiumSemaine.isEmpty() ? "" : "*SUTOM classement semaine*\n");
+    public String podiumSemainePrettyPrint(
+        List<Set<Joueur>> podiumSemaine,
+        ZonedDateTime firstDay,
+        ZonedDateTime lastDay
+    ) {
+        var sb = new StringBuilder();
+        if (!podiumSemaine.isEmpty()) {
+            sb.append("*SUTOM classement semaine du ").append(formatWeekDateRange(firstDay, lastDay)).append("*\n");
+        }
         int i = 0;
         for (Set<Joueur> joueurs : podiumSemaine) {
             for (Joueur joueur : joueurs) {
@@ -54,6 +78,24 @@ public class PodiumSemaineService {
             }
             i += joueurs.size();
         }
+        return sb.toString();
+    }
+
+    private String formatWeekDateRange(ZonedDateTime firstDay, ZonedDateTime lastDay) {
+        if (firstDay == null || lastDay == null) {
+            return "?-?";
+        }
+        if (firstDay.truncatedTo(ChronoUnit.DAYS).equals(lastDay.truncatedTo(ChronoUnit.DAYS))) {
+            return dayMonthYearDateFormatter.format(firstDay);
+        }
+        var sb = new StringBuilder();
+        if (firstDay.getYear() == lastDay.getYear()) {
+            sb.append(dayMonthDateFormatter.format(firstDay));
+        } else {
+            sb.append(dayMonthYearDateFormatter.format(firstDay));
+        }
+        sb.append("-");
+        sb.append(dayMonthYearDateFormatter.format(lastDay));
         return sb.toString();
     }
 }

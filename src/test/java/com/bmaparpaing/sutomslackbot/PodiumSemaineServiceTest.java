@@ -3,13 +3,15 @@ package com.bmaparpaing.sutomslackbot;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PodiumSemaineServiceTest {
 
-    private final PodiumSemaineService podiumSemaineService = new PodiumSemaineService();
+    private final SutomSlackbotProperties sutomSlackbotProperties = new SutomSlackbotProperties();
+    private final PodiumSemaineService podiumSemaineService = new PodiumSemaineService(sutomSlackbotProperties);
 
     @Test
     void computeScoreSemaine_givenEmptyList_shouldReturnEmptyMap() {
@@ -79,13 +81,13 @@ class PodiumSemaineServiceTest {
 
     @Test
     void podiumSemainePrettyPrint_givenEmptyList_shouldReturnEmptyString() {
-        var result = podiumSemaineService.podiumSemainePrettyPrint(Collections.emptyList());
+        var result = podiumSemaineService.podiumSemainePrettyPrint(Collections.emptyList(), null, null);
 
         assertThat(result).isEmpty();
     }
 
     @Test
-    void podiumSemainePrettyPrint_givenListOfJoueursSet_shouldReturnPodiumSemainePrettyPrint() {
+    void podiumSemainePrettyPrint_givenListOfJoueursSetWithNullDates_shouldReturnPodiumSemainePrettyPrint() {
         var joueur1 = new Joueur("A1", "Joueur UN");
         var joueur2 = new Joueur("A2", "Joueur DEUX");
         var joueur3 = new Joueur("A3", "Joueur TROIS");
@@ -93,16 +95,59 @@ class PodiumSemaineServiceTest {
         var joueur5 = new Joueur("A5", "Joueur CINQ");
 
         var result = podiumSemaineService.podiumSemainePrettyPrint(
-            List.of(Set.of(joueur1), Set.of(joueur2), Set.of(joueur3), Set.of(joueur4), Set.of(joueur5)));
+            List.of(Set.of(joueur1), Set.of(joueur2), Set.of(joueur3), Set.of(joueur4), Set.of(joueur5)), null, null);
 
         assertThat(result).isEqualTo("""
-            *SUTOM classement semaine*
+            *SUTOM classement semaine du ?-?*
                         
             :trophy: *Joueur UN*
             :second_place_medal: Joueur DEUX
             :third_place_medal: Joueur TROIS
             4. Joueur QUATRE
             5. Joueur CINQ""");
+    }
+
+    @Test
+    void podiumSemainePrettyPrint_givenJoueurWithEqualDates_shouldReturnPodiumSemainePrettyPrint() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var zonedNow = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
+
+        var result = podiumSemaineService.podiumSemainePrettyPrint(List.of(Set.of(joueur1)), zonedNow, zonedNow);
+
+        assertThat(result).isEqualTo("""
+            *SUTOM classement semaine du 03/12/07*
+                        
+            :trophy: *Joueur UN*""");
+    }
+
+    @Test
+    void podiumSemainePrettyPrint_givenJoueurWithTwoDates_shouldReturnPodiumSemainePrettyPrint() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var firstZonedDate = ZonedDateTime.parse("2022-08-29T10:00:00+02:00[Europe/Paris]");
+        var lastZonedDate = ZonedDateTime.parse("2022-09-02T10:00:00+02:00[Europe/Paris]");
+
+        var result = podiumSemaineService.podiumSemainePrettyPrint(List.of(Set.of(joueur1)),
+            firstZonedDate, lastZonedDate);
+
+        assertThat(result).isEqualTo("""
+            *SUTOM classement semaine du 29/08-02/09/22*
+                        
+            :trophy: *Joueur UN*""");
+    }
+
+    @Test
+    void podiumSemainePrettyPrint_givenJoueurWithTwoDatesSpanningTwoYears_shouldReturnPodiumSemainePrettyPrint() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var firstZonedDate = ZonedDateTime.parse("2021-12-29T10:00:00+01:00[Europe/Paris]");
+        var lastZonedDate = ZonedDateTime.parse("2022-01-02T10:00:00+01:00[Europe/Paris]");
+
+        var result = podiumSemaineService.podiumSemainePrettyPrint(List.of(Set.of(joueur1)),
+            firstZonedDate, lastZonedDate);
+
+        assertThat(result).isEqualTo("""
+            *SUTOM classement semaine du 29/12/21-02/01/22*
+                        
+            :trophy: *Joueur UN*""");
     }
 
     @Test
@@ -116,10 +161,10 @@ class PodiumSemaineServiceTest {
         var result = podiumSemaineService.podiumSemainePrettyPrint(List.of(
             Set.of(joueur1),
             new LinkedHashSet<>(List.of(joueur2, joueur3)),
-            new LinkedHashSet<>(List.of(joueur4, joueur5))));
+            new LinkedHashSet<>(List.of(joueur4, joueur5))), null, null);
 
         assertThat(result).isEqualTo("""
-            *SUTOM classement semaine*
+            *SUTOM classement semaine du ?-?*
                         
             :trophy: *Joueur UN*
             :second_place_medal: Joueur DEUX

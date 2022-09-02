@@ -1,14 +1,16 @@
 package com.bmaparpaing.sutomslackbot;
 
 import com.slack.api.methods.SlackApiException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,24 +31,18 @@ class PodiumControllerTest {
     @Mock
     private SlackService slackService;
 
-    private final SutomSlackbotProperties sutomSlackbotProperties = new SutomSlackbotProperties();
-
+    @InjectMocks
     private PodiumController podiumController;
-
-    @BeforeEach
-    void setUp() {
-        podiumController = new PodiumController(podiumJourService, podiumSemaineService, sutomPartageService,
-            slackService, sutomSlackbotProperties);
-    }
 
     @Test
     void computeAndPostPodiumJour_givenEmptyTodayConversation_shouldDoNothing() throws SlackApiException, IOException {
-        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(Collections.emptyList());
+        var zonedNow = ZonedDateTime.now();
+        when(sutomPartageService.readConversationFromSlackApiOfDay(zonedNow)).thenReturn(Collections.emptyList());
 
-        podiumController.computeAndPostPodiumJour();
+        podiumController.computeAndPostPodiumJour(zonedNow);
 
         verify(podiumJourService, never()).sortSutomPartages(any());
-        verify(podiumJourService, never()).podiumJourTodayPrettyPrint(any());
+        verify(podiumJourService, never()).podiumJourPrettyPrint(any(), eq(zonedNow));
         verify(slackService, never()).postMessage(any());
     }
 
@@ -56,11 +52,12 @@ class PodiumControllerTest {
         var partages = List.of(new SutomPartage(new Joueur("1", "Joueur 1"),
             Instant.now(), 3, 12, 4));
         var podium = "PODIUM TEST JOUR";
-        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(partages);
+        var zonedNow = ZonedDateTime.now();
+        when(sutomPartageService.readConversationFromSlackApiOfDay(zonedNow)).thenReturn(partages);
         when(podiumJourService.sortSutomPartages(partages)).thenReturn(partages);
-        when(podiumJourService.podiumJourPrettyPrint(eq(partages), any())).thenReturn(podium);
+        when(podiumJourService.podiumJourPrettyPrint(partages, zonedNow)).thenReturn(podium);
 
-        podiumController.computeAndPostPodiumJour();
+        podiumController.computeAndPostPodiumJour(zonedNow);
 
         verify(slackService, times(1)).postMessage(podium);
     }
@@ -68,14 +65,15 @@ class PodiumControllerTest {
     @Test
     void computeAndPostPodiumSemaine_givenEmptyConversation_shouldDoNothing()
         throws SlackApiException, IOException {
-        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(Collections.emptyList());
+        var zonedNow = ZonedDateTime.now();
+        when(sutomPartageService.readConversationFromSlackApiOfDay(zonedNow)).thenReturn(Collections.emptyList());
 
-        podiumController.computeAndPostPodiumSemaine();
+        podiumController.computeAndPostPodiumSemaine(zonedNow);
 
         verify(podiumJourService, never()).sortSutomPartages(any());
         verify(podiumSemaineService, never()).computeScoreSemaine(any());
         verify(podiumSemaineService, never()).sortScoreSemaine(any());
-        verify(podiumSemaineService, never()).podiumSemainePrettyPrint(any());
+        verify(podiumSemaineService, never()).podiumSemainePrettyPrint(any(), any(), any());
         verify(slackService, never()).postMessage(any());
     }
 
@@ -85,16 +83,18 @@ class PodiumControllerTest {
         var partages = List.of(new SutomPartage(new Joueur("1", "Joueur 1"),
             Instant.now(), 3, 12, 4));
         var podium = "PODIUM TEST SEMAINE";
-
+        var zonedDateTime = ZonedDateTime.parse("2022-09-02T12:00:00+02:00[Europe/Paris]");
         when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(partages);
         when(podiumJourService.sortSutomPartages(partages)).thenReturn(partages);
         when(podiumSemaineService.computeScoreSemaine(any())).thenReturn(Collections.emptyMap());
         when(podiumSemaineService.sortScoreSemaine(any())).thenReturn(Collections.emptyList());
-        when(podiumSemaineService.podiumSemainePrettyPrint(any())).thenReturn(podium);
+        when(podiumSemaineService.podiumSemainePrettyPrint(any(), any(), any())).thenReturn(podium);
 
-        podiumController.computeAndPostPodiumSemaine();
+        podiumController.computeAndPostPodiumSemaine(zonedDateTime);
 
-        verify(sutomPartageService, atLeastOnce()).readConversationFromSlackApiOfDay(any());
+        verify(sutomPartageService, times(5)).readConversationFromSlackApiOfDay(any());
         verify(slackService, times(1)).postMessage(podium);
+        verify(podiumSemaineService, times(1)).podiumSemainePrettyPrint(
+            any(), eq(zonedDateTime.minus(4, ChronoUnit.DAYS)), eq(zonedDateTime));
     }
 }
