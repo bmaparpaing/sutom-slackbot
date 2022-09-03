@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class PodiumSemaineService {
@@ -53,7 +52,7 @@ public class PodiumSemaineService {
         Map<Integer, Set<Joueur>> joueursByScore = scoreSemaine.entrySet().stream()
             .collect(Collectors.groupingBy(
                 joueurEntry -> Arrays.stream(joueurEntry.getValue()).sum(),
-                Collectors.flatMapping(joueurEntry -> Stream.of(joueurEntry.getKey()), Collectors.toSet())));
+                Collectors.mapping(Map.Entry::getKey, Collectors.toSet())));
         return joueursByScore.keySet().stream()
             .sorted()
             .map(joueursByScore::get)
