@@ -28,26 +28,49 @@ public class PodiumSemaineService {
             .withLocale(Locale.forLanguageTag(sutomSlackbotProperties.getLocale()));
     }
 
+    /**
+     * Calcule le score semaine de chaque joueur participant au moins une fois sur l'ensemble des podiums jour fournis.
+     * Exemple de résultat obtenu une fois le calcul effectué :
+     * <pre>
+     *                 L M M J V
+     *     Joueur 1    1 2 1 3 1
+     *     Joueur 2    2 1 3 2 3
+     *     Joueur 3    3 3 2 1 2
+     * </pre>
+     * Chaque numéro correspond à la place du joueur dans le podium jour.
+     *
+     * @param podiumJours Une liste de podium jours, un pour chaque jour de la semaine. Un podium jour correspond à une
+     *                    liste de partage sutom triés selon le classement jour.
+     * @return Une Map associant à chaque joueur un tableau représentant le score du joueur sur chaque journée.
+     */
     public Map<Joueur, int[]> computeScoreSemaine(List<List<SutomPartage>> podiumJours) {
-        Integer[] nombreJoueurs = podiumJours.stream().map(List::size).toArray(Integer[]::new);
+        Integer[] nombreJoueursParJour = podiumJours.stream().map(List::size).toArray(Integer[]::new);
         var scoreSemaine = new HashMap<Joueur, int[]>();
         for (int i = 0; i < podiumJours.size(); i++) {
             var podiumJour = podiumJours.get(i);
             for (int j = 0; j < podiumJour.size(); j++) {
                 scoreSemaine.putIfAbsent(podiumJour.get(j).joueur(), new int[podiumJours.size()]);
+                // Le joueur reçoit le score de sa position (= l'index j) dans le classement : 1 pour premier, etc.
                 scoreSemaine.get(podiumJour.get(j).joueur())[i] = j + 1;
             }
         }
+        // Pour chaque jour manqué (score à 0), le joueur reçoit automatiquement le score de la dernière place
         for (int[] scores : scoreSemaine.values()) {
             for (int i = 0; i < podiumJours.size(); i++) {
                 if (scores[i] == 0) {
-                    scores[i] = nombreJoueurs[i] + 1;
+                    scores[i] = nombreJoueursParJour[i] + 1;
                 }
             }
         }
         return scoreSemaine;
     }
 
+    /**
+     * Calcule le score total de chaque joueur pour la semaine et classe les joueurs du plus petit score au plus grand.
+     *
+     * @param scoreSemaine Une Map associant à chaque joueur le score du joueur sur chaque journée.
+     * @return Une liste de joueurs groupés en Set pour s'accommoder d'une égalité le cas échéant.
+     */
     public List<Set<Joueur>> sortScoreSemaine(Map<Joueur, int[]> scoreSemaine) {
         Map<Integer, Set<Joueur>> joueursByScore = scoreSemaine.entrySet().stream()
             .collect(Collectors.groupingBy(

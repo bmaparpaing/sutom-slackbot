@@ -47,6 +47,7 @@ public class PodiumController {
     public void computeAndPostPodiumSemaine(ZonedDateTime zonedDateTime) throws SlackApiException, IOException {
         int dayOfWeek = zonedDateTime.getDayOfWeek().getValue();
         List<List<SutomPartage>> podiumJours = new ArrayList<>();
+        // Pour chaque jour depuis la date en paramètre jusqu'au lundi précédant
         for (int i = 0; i < dayOfWeek; i++) {
             List<SutomPartage> slackPartages = sutomPartageService.readConversationFromSlackApiOfDay(
                 zonedDateTime.minus(i, ChronoUnit.DAYS));
@@ -55,6 +56,7 @@ public class PodiumController {
             }
         }
         if (!podiumJours.isEmpty()) {
+            // Mettre la collection dans l'ordre chronologique : du lundi jusqu'à la date en paramètre
             Collections.reverse(podiumJours);
             Map<Joueur, int[]> scoreSemaine = podiumSemaineService.computeScoreSemaine(podiumJours);
             List<Set<Joueur>> podium = podiumSemaineService.sortScoreSemaine(scoreSemaine);
