@@ -8,5 +8,4 @@ public record SutomPartage(Joueur joueur, Instant timestamp, int coup, int lettr
         this(joueur, timestamp, texte.getCoup(), texte.getLettreCorrecte(), texte.getLettreMalPlacee());
     }
 
-
 }
