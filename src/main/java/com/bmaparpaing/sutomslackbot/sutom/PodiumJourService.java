@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 @Service
 public class PodiumJourService {
@@ -23,12 +24,22 @@ public class PodiumJourService {
     }
 
     public List<SutomPartage> sortSutomPartages(List<SutomPartage> sutomPartages) {
-        return sutomPartages.stream()
-            .sorted(Comparator.comparingInt(SutomPartage::coup)
-                .thenComparingInt(SutomPartage::lettreCorrecte)
-                .thenComparingInt(SutomPartage::lettreMalPlacee)
-                .thenComparing(SutomPartage::timestamp))
-            .toList();
+        return Stream.concat(
+            sutomPartages
+                .stream()
+                .filter(sutomPartage -> !sutomPartage.echec())
+                .sorted(Comparator.comparingInt(SutomPartage::coup)
+                    .thenComparingInt(SutomPartage::lettreCorrecte)
+                    .thenComparingInt(SutomPartage::lettreMalPlacee)
+                    .thenComparing(SutomPartage::timestamp)),
+            sutomPartages
+                .stream()
+                .filter(SutomPartage::echec)
+                .sorted(Comparator.comparingInt(SutomPartage::lettreCorrecte)
+                    .thenComparingInt(SutomPartage::lettreMalPlacee)
+                    .reversed()
+                    .thenComparing(SutomPartage::timestamp))
+        ).toList();
     }
 
     public String podiumJourPrettyPrint(List<SutomPartage> sutomPartages, ZonedDateTime zonedDateTime) {

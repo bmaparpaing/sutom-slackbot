@@ -1,0 +1,7 @@
+SUTOM #242 -/6
+:grand_carré_rouge::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu:
+:grand_carré_rouge::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_cercle_jaune::grand_carré_bleu:
+:grand_carré_rouge::grand_cercle_jaune::grand_carré_bleu::grand_carré_bleu::grand_cercle_jaune::grand_carré_bleu::grand_carré_bleu:
+:grand_carré_rouge::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu:
+:grand_carré_rouge::grand_carré_bleu::grand_carré_bleu::grand_cercle_jaune::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu:
+:grand_carré_rouge::grand_carré_bleu::grand_carré_bleu::grand_cercle_jaune::grand_carré_bleu::grand_carré_bleu::grand_carré_bleu:

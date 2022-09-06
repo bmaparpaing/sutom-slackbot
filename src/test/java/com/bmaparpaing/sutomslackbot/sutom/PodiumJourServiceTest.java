@@ -30,17 +30,26 @@ class PodiumJourServiceTest {
             Instant.now(), 3, 12, 4);
         var partage2 = new SutomPartage(new Joueur("2", "Joueur 2"),
             Instant.now(), 1, 6, 0);
+        var partageA = new SutomPartage(new Joueur("A", "Joueur A"),
+            Instant.now(), 6, 15, 0, true);
         var partage3 = new SutomPartage(new Joueur("3", "Joueur 3"),
             Instant.now(), 2, 8, 1);
         var partage4 = new SutomPartage(new Joueur("4", "Joueur 4"),
             Instant.now(), 2, 7, 4);
+        var partageB = new SutomPartage(new Joueur("B", "Joueur B"),
+            Instant.now(), 6, 8, 5, true);
         var partage5 = new SutomPartage(new Joueur("5", "Joueur 5"),
             Instant.now(), 2, 8, 1);
+        var partageC = new SutomPartage(new Joueur("C", "Joueur C"),
+            Instant.now(), 6, 15, 0, true);
+        var partageD = new SutomPartage(new Joueur("D", "Joueur D"),
+            Instant.now(), 6, 8, 3, true);
 
         var result = podiumJourService.sortSutomPartages(
-            List.of(partage1, partage2, partage3, partage4, partage5));
+            List.of(partage1, partage2, partageA, partage3, partage4, partageB, partage5, partageC, partageD));
 
-        assertThat(result).containsExactly(partage2, partage4, partage3, partage5, partage1);
+        assertThat(result).containsExactly(partage2, partage4, partage3, partage5, partage1, partageA, partageC,
+            partageB, partageD);
     }
 
     @Test
