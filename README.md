@@ -31,7 +31,16 @@ Le classement est envoyé dans le même canal que celui qui est configuré.
 
 ## 🧮 Calcul du score
 
+### 📅 Classement jour
+
 * Un joueur gagne s'il trouve le mot du jour en moins de coups qu'un autre.
 * En cas d'égalité, il gagne s'il trouve avec moins de lettres rouges (lettres bien placées).
 * En cas d'égalité, il gagne s'il trouve avec moins de lettres jaunes (lettres mal placées).
 * En cas d'égalité, le gagnant est celui qui a partagé son score en premier.
+
+### 🗓️ Classement semaine
+
+* Un joueur gagne autant de points que son placement dans le classement jour :
+  premier = 1 point, deuxième = 2 points, etc.
+* Celui qui a le moins de points au total sur la semaine gagne.
+* En cas d'égalité, il y a égalité !
