@@ -35,9 +35,8 @@ public class PodiumJourService {
             sutomPartages
                 .stream()
                 .filter(SutomPartage::echec)
-                .sorted(Comparator.comparingInt(SutomPartage::lettreCorrecte)
-                    .thenComparingInt(SutomPartage::lettreMalPlacee)
-                    .reversed()
+                .sorted(Comparator.comparingInt(SutomPartage::lettreCorrecte).reversed()
+                    .thenComparing(Comparator.comparingInt(SutomPartage::lettreMalPlacee).reversed())
                     .thenComparing(SutomPartage::timestamp))
         ).toList();
     }
