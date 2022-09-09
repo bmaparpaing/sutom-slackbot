@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/bmaparpaing/sutom-slackbot/actions/workflows/main.yml/badge.svg)](https://github.com/bmaparpaing/sutom-slackbot/actions/workflows/main.yml)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg)](https://gitmoji.dev)
+[![Version](https://img.shields.io/github/v/release/bmaparpaing/sutom-slackbot)](https://github.com/bmaparpaing/sutom-slackbot/releases)
 
 **[SUTOM](https://sutom.nocle.fr/)** est un jeu populaire français basé sur Wordle et Motus. Sa fonction "Partager"
 permet de copier dans le presse-papier un diagramme de la partie du jour sous forme d'émojis pour le partager via
