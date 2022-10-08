@@ -44,6 +44,10 @@ class SlackServiceTest {
     private ArgumentCaptor<RequestConfigurator<ConversationsHistoryRequest.ConversationsHistoryRequestBuilder>>
         requestBuilderLambdaCaptor;
 
+    @Captor
+    private ArgumentCaptor<RequestConfigurator<ChatPostMessageRequest.ChatPostMessageRequestBuilder>>
+        chatPostBuilderLambdaCaptor;
+
     @BeforeEach
     void setUp() {
         slackService = new SlackService(client, slackProperties);
@@ -185,6 +189,23 @@ class SlackServiceTest {
 
         var result = slackService.postMessage("TEST");
 
+        assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void postCodeBlockMessage_shouldReturnChatPostMessageResponse() throws SlackApiException, IOException {
+        var response = new ChatPostMessageResponse();
+        when(client.chatPostMessage(
+            ArgumentMatchers.<RequestConfigurator<ChatPostMessageRequest.ChatPostMessageRequestBuilder>>any()
+        )).thenReturn(response);
+        var builder = ChatPostMessageRequest.builder();
+
+        var result = slackService.postCodeBlockMessage("TEST");
+        verify(client).chatPostMessage(chatPostBuilderLambdaCaptor.capture());
+        var lambda = chatPostBuilderLambdaCaptor.getValue();
+        var request = lambda.configure(builder).build();
+
+        assertThat(request).extracting(ChatPostMessageRequest::getText).isEqualTo("```TEST```");
         assertThat(result).isEqualTo(response);
     }
 }
