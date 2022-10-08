@@ -71,13 +71,14 @@ class PodiumControllerTest {
         var zonedNow = ZonedDateTime.now();
         when(sutomPartageService.readConversationFromSlackApiOfDay(zonedNow)).thenReturn(Collections.emptyList());
 
-        podiumController.computeAndPostPodiumSemaine(zonedNow);
+        podiumController.computeAndPostPodiumSemaine(zonedNow, false);
 
         verify(podiumJourService, never()).sortSutomPartages(any());
         verify(podiumSemaineService, never()).computeScoreSemaine(any());
         verify(podiumSemaineService, never()).sortScoreSemaine(any());
         verify(podiumSemaineService, never()).podiumSemainePrettyPrint(any(), any(), any());
         verify(slackService, never()).postMessage(any());
+        verify(slackService, never()).postCodeBlockMessage(any());
     }
 
     @Test
@@ -93,11 +94,36 @@ class PodiumControllerTest {
         when(podiumSemaineService.sortScoreSemaine(any())).thenReturn(Collections.emptyList());
         when(podiumSemaineService.podiumSemainePrettyPrint(any(), any(), any())).thenReturn(podium);
 
-        podiumController.computeAndPostPodiumSemaine(zonedDateTime);
+        podiumController.computeAndPostPodiumSemaine(zonedDateTime, false);
 
         verify(sutomPartageService, times(5)).readConversationFromSlackApiOfDay(any());
         verify(slackService, times(1)).postMessage(podium);
         verify(podiumSemaineService, times(1)).podiumSemainePrettyPrint(
             any(), eq(zonedDateTime.minus(4, ChronoUnit.DAYS)), eq(zonedDateTime));
+        verify(slackService, never()).postCodeBlockMessage(any());
+    }
+
+    @Test
+    void computeAndPostPodiumSemaine_givenThisWeekConversationAndPrintScore_shouldPostPodiumPrettyPrintAndScore()
+        throws SlackApiException, IOException {
+        var partages = List.of(new SutomPartage(new Joueur("1", "Joueur 1"),
+            Instant.now(), 3, 12, 4));
+        var podium = "PODIUM TEST SEMAINE";
+        var score = "SCORE TEST";
+        var zonedDateTime = ZonedDateTime.parse("2022-09-02T12:00:00+02:00[Europe/Paris]");
+        when(sutomPartageService.readConversationFromSlackApiOfDay(any())).thenReturn(partages);
+        when(podiumJourService.sortSutomPartages(partages)).thenReturn(partages);
+        when(podiumSemaineService.computeScoreSemaine(any())).thenReturn(Collections.emptyMap());
+        when(podiumSemaineService.sortScoreSemaine(any())).thenReturn(Collections.emptyList());
+        when(podiumSemaineService.podiumSemainePrettyPrint(any(), any(), any())).thenReturn(podium);
+        when(podiumSemaineService.scoreSemainePrettyPrint(any(), any())).thenReturn(score);
+
+        podiumController.computeAndPostPodiumSemaine(zonedDateTime, true);
+
+        verify(sutomPartageService, times(5)).readConversationFromSlackApiOfDay(any());
+        verify(slackService, times(1)).postMessage(podium);
+        verify(podiumSemaineService, times(1)).podiumSemainePrettyPrint(
+            any(), eq(zonedDateTime.minus(4, ChronoUnit.DAYS)), eq(zonedDateTime));
+        verify(slackService, times(1)).postCodeBlockMessage(score);
     }
 }

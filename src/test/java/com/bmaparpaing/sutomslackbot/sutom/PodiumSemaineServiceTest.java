@@ -178,4 +178,55 @@ class PodiumSemaineServiceTest {
             4. Joueur CINQ""");
     }
 
+    @Test
+    void scoreSemainePrettyPrint_givenEmptyScoreSemaine_shouldReturnEmptyString() {
+        var result = podiumSemaineService.scoreSemainePrettyPrint(Collections.emptyMap(), Collections.emptyList());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void scoreSemainePrettyPrint_givenScoreSemaine_shouldReturnScoreSemainePrettyPrint() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var joueur2 = new Joueur("A2", "Joueur DEUX");
+        var joueur3 = new Joueur("A3", "Joueur TROIS");
+        var joueur4 = new Joueur("A4", "Joueur QUATRE");
+        var joueur5 = new Joueur("A5", "Joueur CINQ");
+        var scoreSemaine = Map.of(
+            joueur1, new int[]{2, 5, 3, 2, 3},
+            joueur2, new int[]{1, 4, 1, 2, 3},
+            joueur3, new int[]{3, 3, 5, 2, 3},
+            joueur4, new int[]{4, 2, 4, 2, 1},
+            joueur5, new int[]{4, 1, 2, 1, 2});
+        List<Set<Joueur>> podium = List.of(
+            Set.of(joueur5),
+            Set.of(joueur2),
+            Set.of(joueur4),
+            Set.of(joueur1),
+            Set.of(joueur3));
+        var result = podiumSemaineService.scoreSemainePrettyPrint(scoreSemaine, podium);
+        assertThat(result).isEqualTo("""
+            Joueur CINQ      4 1 2 1 2  10
+            Joueur DEUX      1 4 1 2 3  11
+            Joueur QUATRE    4 2 4 2 1  13
+            Joueur UN        2 5 3 2 3  15
+            Joueur TROIS     3 3 5 2 3  16
+            """);
+    }
+
+    @Test
+    void scoreSemainePrettyPrint_givenTiedScoreSemaine_shouldReturnScoreSemainePrettyPrint() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var joueur2 = new Joueur("A2", "Joueur DEUX");
+        var scoreSemaine = Map.of(
+            joueur1, new int[]{1, 2, 1, 2},
+            joueur2, new int[]{2, 1, 2, 1});
+        List<Set<Joueur>> podium = List.of(new LinkedHashSet<>(List.of(joueur1, joueur2)));
+        var result = podiumSemaineService.scoreSemainePrettyPrint(scoreSemaine, podium);
+        assertThat(result).isEqualTo("""
+            Joueur UN      1 2 1 2  6
+            Joueur DEUX    2 1 2 1  6
+            """);
+    }
+
 }

@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class PodiumSemaineService {
@@ -123,6 +124,30 @@ public class PodiumSemaineService {
         }
         sb.append("-");
         sb.append(dayMonthYearDateFormatter.format(lastDay));
+        return sb.toString();
+    }
+
+    public String scoreSemainePrettyPrint(Map<Joueur, int[]> scoreSemaine, List<Set<Joueur>> podiumSemaine) {
+        var sb = new StringBuilder();
+        long nombreJoueurs = podiumSemaine.stream().mapToLong(Collection::size).sum();
+        int maxNameLength = podiumSemaine.stream().flatMap(Collection::stream)
+            .map(Joueur::nom).mapToInt(String::length).max().orElse(0);
+        Map<Joueur, Integer> totalScore = scoreSemaine.entrySet().stream().collect
+            (Collectors.toMap(Map.Entry::getKey, entry -> Arrays.stream(entry.getValue()).sum()));
+        int maxTotalScore = totalScore.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+        try (var formatter = new Formatter(sb)) {
+            podiumSemaine.stream().flatMap(Collection::stream).forEach(joueur -> {
+                var score = scoreSemaine.get(joueur);
+                var format = "%-" + (maxNameLength + 4) + "s"
+                    + ("%-" + ((int) Math.log10(nombreJoueurs) + 2) + "s").repeat(score.length)
+                    + "%" + ((int) Math.log10(maxTotalScore) + 2) + "s"
+                    + "%n";
+                formatter.format(format, Stream.concat(
+                    Stream.of(joueur.nom()), Stream.concat(
+                        Arrays.stream(score).boxed(),
+                        Stream.of(totalScore.get(joueur)))).toArray());
+            });
+        }
         return sb.toString();
     }
 }

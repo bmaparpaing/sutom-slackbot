@@ -30,7 +30,7 @@ class RunnerTest {
         runner.run();
 
         verify(podiumController, never()).computeAndPostPodiumJour(any());
-        verify(podiumController, never()).computeAndPostPodiumSemaine(any());
+        verify(podiumController, never()).computeAndPostPodiumSemaine(any(), anyBoolean());
     }
 
     @Test
@@ -41,17 +41,24 @@ class RunnerTest {
     }
 
     @Test
-    void run_givenCaseInsensitiveArgumentSemaine_shouldRunPodiumSemaine() throws Exception {
+    void run_givenCaseInsensitiveArgumentSemaineOnly_shouldRunPodiumSemaine() throws Exception {
         runner.run("SemAINe");
 
-        verify(podiumController, only()).computeAndPostPodiumSemaine(any());
+        verify(podiumController, only()).computeAndPostPodiumSemaine(any(), eq(false));
+    }
+
+    @Test
+    void run_givenCaseInsensitiveArgumentSemaineAndPrintScore_shouldRunPodiumSemaineWithScore() throws Exception {
+        runner.run("SemAINe", "--printScore");
+
+        verify(podiumController, only()).computeAndPostPodiumSemaine(any(), eq(true));
     }
 
     @Test
     void run_givenUnrecognizedArgument_shouldDoNothing() throws Exception {
-        runner.run("oervQZniosn");
+        runner.run("oervQZniosn", "qpoazvn");
 
         verify(podiumController, never()).computeAndPostPodiumJour(any());
-        verify(podiumController, never()).computeAndPostPodiumSemaine(any());
+        verify(podiumController, never()).computeAndPostPodiumSemaine(any(), anyBoolean());
     }
 }

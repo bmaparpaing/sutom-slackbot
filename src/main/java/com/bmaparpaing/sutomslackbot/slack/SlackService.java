@@ -65,4 +65,8 @@ public class SlackService {
         return client.chatPostMessage(req -> req.channel(slackProperties.getChannel()).text(texte));
     }
 
+    public ChatPostMessageResponse postCodeBlockMessage(String texte) throws SlackApiException, IOException {
+        return client.chatPostMessage(req -> req.channel(slackProperties.getChannel()).text("```" + texte + "```"));
+    }
+
 }
