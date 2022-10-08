@@ -1,6 +1,7 @@
 package com.bmaparpaing.sutomslackbot.sutom;
 
 
+import com.bmaparpaing.sutomslackbot.model.GolfScore;
 import com.bmaparpaing.sutomslackbot.model.Joueur;
 import com.bmaparpaing.sutomslackbot.model.SutomPartage;
 import com.bmaparpaing.sutomslackbot.slack.SlackService;
@@ -44,6 +45,15 @@ public class PodiumController {
         }
     }
 
+    public void computeAndPostPodiumJourGolf(ZonedDateTime zonedDateTime) throws SlackApiException, IOException {
+        List<SutomPartage> slackPartages = sutomPartageService.readConversationFromSlackApiOfDay(zonedDateTime);
+        if (!slackPartages.isEmpty()) {
+            List<Set<Joueur>> podium = podiumJourService.sortSutomPartagesGolf(slackPartages);
+            String text = podiumJourService.podiumJourPrettyPrintGolf(podium, zonedDateTime);
+            slackService.postMessage(text);
+        }
+    }
+
     public void computeAndPostPodiumSemaine(ZonedDateTime zonedDateTime, boolean printScore)
         throws SlackApiException, IOException {
         int dayOfWeek = zonedDateTime.getDayOfWeek().getValue();
@@ -68,6 +78,26 @@ public class PodiumController {
                 String scoreText = podiumSemaineService.scoreSemainePrettyPrint(scoreSemaine, podium);
                 slackService.postCodeBlockMessage(scoreText);
             }
+        }
+    }
+
+    public void computeAndPostPodiumSemaineGolf(ZonedDateTime zonedDateTime) throws SlackApiException, IOException {
+        int dayOfWeek = zonedDateTime.getDayOfWeek().getValue();
+        List<List<SutomPartage>> sutomPartages = new ArrayList<>();
+        // Pour chaque jour depuis la date en paramètre jusqu'au lundi précédant
+        for (int i = 0; i < dayOfWeek; i++) {
+            List<SutomPartage> slackPartages = sutomPartageService.readConversationFromSlackApiOfDay(
+                zonedDateTime.minus(i, ChronoUnit.DAYS));
+            if (!slackPartages.isEmpty()) {
+                sutomPartages.add(slackPartages);
+            }
+        }
+        if (!sutomPartages.isEmpty()) {
+            Map<Joueur, GolfScore> scoreSemaine = podiumSemaineService.computeScoreSemaineGolf(sutomPartages);
+            List<Set<Joueur>> podium = podiumSemaineService.sortScoreSemaineGolf(scoreSemaine);
+            String text = podiumSemaineService.podiumSemainePrettyPrintGolf(
+                podium, zonedDateTime.minus(dayOfWeek - 1L, ChronoUnit.DAYS), zonedDateTime);
+            slackService.postMessage(text);
         }
     }
 }

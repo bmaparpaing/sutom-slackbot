@@ -1,14 +1,16 @@
 package com.bmaparpaing.sutomslackbot.sutom;
 
 import com.bmaparpaing.sutomslackbot.config.SutomSlackbotProperties;
+import com.bmaparpaing.sutomslackbot.model.GolfScore;
+import com.bmaparpaing.sutomslackbot.model.Joueur;
+import com.bmaparpaing.sutomslackbot.model.JoueurGolfScore;
 import com.bmaparpaing.sutomslackbot.model.SutomPartage;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -41,17 +43,47 @@ public class PodiumJourService {
         ).toList();
     }
 
+    public List<Set<Joueur>> sortSutomPartagesGolf(List<SutomPartage> sutomPartages) {
+        Map<GolfScore, Set<Joueur>> joueursByScore = sutomPartages.stream()
+            .map(JoueurGolfScore::new)
+            .collect(Collectors.groupingBy(JoueurGolfScore::golfScore,
+                Collectors.mapping(JoueurGolfScore::joueur, Collectors.toSet())));
+        return joueursByScore.keySet().stream()
+            .sorted(Comparator.comparingInt(GolfScore::coup)
+                .thenComparing(Comparator.comparingInt(GolfScore::scoreLettre).reversed())
+                .thenComparing(Comparator.comparingInt(GolfScore::subScoreLettre).reversed()))
+            .map(joueursByScore::get)
+            .toList();
+    }
+
+    public String podiumJourPrettyPrintGolf(List<Set<Joueur>> podiumJour, ZonedDateTime zonedDateTime) {
+        return podiumJourPrettyPrint(podiumJour, zonedDateTime, true);
+    }
+
     public String podiumJourPrettyPrint(List<SutomPartage> sutomPartages, ZonedDateTime zonedDateTime) {
+        return podiumJourPrettyPrint(sutomPartages.stream().map(SutomPartage::joueur).map(Set::of).toList(),
+            zonedDateTime, false);
+    }
+
+    private String podiumJourPrettyPrint(List<Set<Joueur>> podiumJour, ZonedDateTime zonedDateTime, boolean golf) {
         var sb = new StringBuilder();
-        for (int i = 0; i < sutomPartages.size(); i++) {
-            switch (i) {
-                case 0 -> sb.append("*SUTOM du ").append(fullTextLocalDateFormatter.format(zonedDateTime)).append("*\n")
-                    .append("\n:trophy: *").append(sutomPartages.get(i).joueur().nom()).append("*");
-                case 1 -> sb.append("\n:second_place_medal: ").append(sutomPartages.get(i).joueur().nom());
-                case 2 -> sb.append("\n:third_place_medal: ").append(sutomPartages.get(i).joueur().nom());
-                case 3 -> sb.append("\n\n").append(i + 1).append(". ").append(sutomPartages.get(i).joueur().nom());
-                default -> sb.append("  ").append(i + 1).append(". ").append(sutomPartages.get(i).joueur().nom());
+        if (!podiumJour.isEmpty()) {
+            sb.append("*SUTOM du ").append(fullTextLocalDateFormatter.format(zonedDateTime))
+                .append(golf ? " mode golf :golf:" : "").append("*\n");
+        }
+        int i = 0;
+        for (Set<Joueur> joueurs : podiumJour) {
+            boolean linebreak = i == 3;
+            for (Joueur joueur : joueurs) {
+                switch (i) {
+                    case 0 -> sb.append("\n:trophy: *").append(joueur.nom()).append("*");
+                    case 1 -> sb.append("\n:second_place_medal: ").append(joueur.nom());
+                    case 2 -> sb.append("\n:third_place_medal: ").append(joueur.nom());
+                    default -> sb.append(linebreak ? "\n\n" : "  ").append(i + 1).append(". ").append(joueur.nom());
+                }
+                linebreak = false;
             }
+            i += joueurs.size();
         }
         return sb.toString();
     }

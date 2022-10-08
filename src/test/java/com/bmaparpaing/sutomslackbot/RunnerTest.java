@@ -61,4 +61,18 @@ class RunnerTest {
         verify(podiumController, never()).computeAndPostPodiumJour(any());
         verify(podiumController, never()).computeAndPostPodiumSemaine(any(), anyBoolean());
     }
+
+    @Test
+    void run_givenCaseInsensitiveArgumentJourAndGolfOption_shouldRunPodiumJourGolf() throws Exception {
+        runner.run("JoUr", "--golf");
+
+        verify(podiumController, only()).computeAndPostPodiumJourGolf(any());
+    }
+
+    @Test
+    void run_givenCaseInsensitiveArgumentSemaineAndGolfOption_shouldRunPodiumSemaine() throws Exception {
+        runner.run("SemAINe", "--golf");
+
+        verify(podiumController, only()).computeAndPostPodiumSemaineGolf(any());
+    }
 }

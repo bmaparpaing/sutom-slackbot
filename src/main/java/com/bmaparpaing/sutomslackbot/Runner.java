@@ -26,13 +26,19 @@ public class Runner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (args != null && args.length > 0) {
             List<String> arguments = Arrays.asList(args);
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.of(sutomSlackbotProperties.getTimeZone()));
             if ("jour".equalsIgnoreCase(arguments.get(0))) {
-                podiumController.computeAndPostPodiumJour(
-                    ZonedDateTime.now(ZoneId.of(sutomSlackbotProperties.getTimeZone())));
+                if (arguments.contains("--golf")) {
+                    podiumController.computeAndPostPodiumJourGolf(now);
+                } else {
+                    podiumController.computeAndPostPodiumJour(now);
+                }
             } else if ("semaine".equalsIgnoreCase(arguments.get(0))) {
-                podiumController.computeAndPostPodiumSemaine(
-                    ZonedDateTime.now(ZoneId.of(sutomSlackbotProperties.getTimeZone())), arguments.contains(
-                        "--printScore"));
+                if (arguments.contains("--golf")) {
+                    podiumController.computeAndPostPodiumSemaineGolf(now);
+                } else {
+                    podiumController.computeAndPostPodiumSemaine(now, arguments.contains("--printScore"));
+                }
             }
         }
     }

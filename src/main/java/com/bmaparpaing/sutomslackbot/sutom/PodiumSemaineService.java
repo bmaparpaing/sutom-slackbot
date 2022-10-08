@@ -1,7 +1,9 @@
 package com.bmaparpaing.sutomslackbot.sutom;
 
 import com.bmaparpaing.sutomslackbot.config.SutomSlackbotProperties;
+import com.bmaparpaing.sutomslackbot.model.GolfScore;
 import com.bmaparpaing.sutomslackbot.model.Joueur;
+import com.bmaparpaing.sutomslackbot.model.JoueurGolfScore;
 import com.bmaparpaing.sutomslackbot.model.SutomPartage;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Service
@@ -57,13 +60,67 @@ public class PodiumSemaineService {
         }
         // Pour chaque jour manqué (score à 0), le joueur reçoit automatiquement le score de la dernière place
         for (int[] scores : scoreSemaine.values()) {
-            for (int i = 0; i < podiumJours.size(); i++) {
+            for (int i = 0; i < scores.length; i++) {
                 if (scores[i] == 0) {
                     scores[i] = nombreJoueursParJour[i] + 1;
                 }
             }
         }
         return scoreSemaine;
+    }
+
+    public Map<Joueur, GolfScore> computeScoreSemaineGolf(List<List<SutomPartage>> sutomPartages) {
+        List<List<JoueurGolfScore>> joueurGolfScores =
+            sutomPartages.stream().map(jour -> jour.stream().map(JoueurGolfScore::new).toList()).toList();
+
+        Integer[] maxCoupParJour = joueurGolfScores.stream()
+            .map(podiumJour -> podiumJour.stream().map(JoueurGolfScore::golfScore).mapToInt(GolfScore::coup).max())
+            .map(optionalMax -> optionalMax.orElse(0))
+            .toArray(Integer[]::new);
+        var scoreSemaine = new HashMap<Joueur, int[]>();
+        for (int i = 0; i < joueurGolfScores.size(); i++) {
+            final int index = i;
+            joueurGolfScores.get(index).forEach(joueurGolfScore -> {
+                scoreSemaine.putIfAbsent(joueurGolfScore.joueur(), new int[joueurGolfScores.size()]);
+                scoreSemaine.get(joueurGolfScore.joueur())[index] = joueurGolfScore.golfScore().coup();
+            });
+        }
+        for (int[] scores : scoreSemaine.values()) {
+            for (int i = 0; i < scores.length; i++) {
+                if (scores[i] == 0) {
+                    scores[i] = maxCoupParJour[i] + 1;
+                }
+            }
+        }
+        var golfScoreSemaine = new HashMap<Joueur, GolfScore>();
+        scoreSemaine.forEach((joueur, coups) -> golfScoreSemaine.put(joueur, new GolfScore(
+            IntStream.of(coups).sum(),
+            joueurGolfScores.stream()
+                .flatMap(Collection::stream)
+                .filter(golfScore -> golfScore.joueur().equals(joueur))
+                .map(JoueurGolfScore::golfScore)
+                .mapToInt(GolfScore::scoreLettre)
+                .sum(),
+            joueurGolfScores.stream()
+                .flatMap(Collection::stream)
+                .filter(golfScore -> golfScore.joueur().equals(joueur))
+                .map(JoueurGolfScore::golfScore)
+                .mapToInt(GolfScore::subScoreLettre)
+                .sum())));
+        return golfScoreSemaine;
+    }
+
+    public List<Set<Joueur>> sortScoreSemaineGolf(Map<Joueur, GolfScore> scoreSemaine) {
+        Map<GolfScore, Set<Joueur>> joueursByScore = scoreSemaine.entrySet().stream()
+            .collect(Collectors.groupingBy(
+                Map.Entry::getValue,
+                Collectors.mapping(Map.Entry::getKey, Collectors.toSet())));
+        return joueursByScore.keySet().stream()
+            .sorted(Comparator.comparingInt(GolfScore::coup)
+                .thenComparing(Comparator.comparingInt(GolfScore::scoreLettre).reversed())
+                .thenComparing(Comparator.comparingInt(GolfScore::subScoreLettre).reversed()))
+            .map(joueursByScore::get)
+            .toList();
     }
 
     /**
@@ -83,14 +140,32 @@ public class PodiumSemaineService {
             .toList();
     }
 
+    public String podiumSemainePrettyPrintGolf(
+        List<Set<Joueur>> podiumSemaine,
+        ZonedDateTime firstDay,
+        ZonedDateTime lastDay
+    ) {
+        return podiumSemainePrettyPrint(podiumSemaine, firstDay, lastDay, true);
+    }
+
     public String podiumSemainePrettyPrint(
         List<Set<Joueur>> podiumSemaine,
         ZonedDateTime firstDay,
         ZonedDateTime lastDay
     ) {
+        return podiumSemainePrettyPrint(podiumSemaine, firstDay, lastDay, false);
+    }
+
+    private String podiumSemainePrettyPrint(
+        List<Set<Joueur>> podiumSemaine,
+        ZonedDateTime firstDay,
+        ZonedDateTime lastDay,
+        boolean golf
+    ) {
         var sb = new StringBuilder();
         if (!podiumSemaine.isEmpty()) {
-            sb.append("*SUTOM classement semaine du ").append(formatWeekDateRange(firstDay, lastDay)).append("*\n");
+            sb.append("*SUTOM classement semaine du ").append(formatWeekDateRange(firstDay, lastDay))
+                .append(golf ? " mode golf :golf:" : "").append("*\n");
         }
         int i = 0;
         for (Set<Joueur> joueurs : podiumSemaine) {

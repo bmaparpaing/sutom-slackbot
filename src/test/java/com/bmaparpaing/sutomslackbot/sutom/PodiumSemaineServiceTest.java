@@ -1,6 +1,7 @@
 package com.bmaparpaing.sutomslackbot.sutom;
 
 import com.bmaparpaing.sutomslackbot.config.SutomSlackbotProperties;
+import com.bmaparpaing.sutomslackbot.model.GolfScore;
 import com.bmaparpaing.sutomslackbot.model.Joueur;
 import com.bmaparpaing.sutomslackbot.model.SutomPartage;
 import org.junit.jupiter.api.Test;
@@ -36,12 +37,44 @@ class PodiumSemaineServiceTest {
         var podium2 = List.of(sutomPartage2, sutomPartage1, sutomPartage3);
         var podium3 = List.of(sutomPartage1, sutomPartage2);
         var podium4 = List.of(sutomPartage2);
-        var result = podiumSemaineService.computeScoreSemaine(List.of(podium1, podium2, podium3, podium4, List.of()));
+        var result = podiumSemaineService.computeScoreSemaine(
+            List.of(podium1, podium2, podium3, podium4, List.of()));
 
         assertThat(result).containsOnly(
             Map.entry(joueur1, new int[]{1, 2, 1, 2, 1}),
             Map.entry(joueur2, new int[]{3, 1, 2, 1, 1}),
             Map.entry(joueur3, new int[]{2, 3, 3, 2, 1})
+        );
+    }
+
+    @Test
+    void computeScoreSemaineGolf_givenEmptyList_shouldReturnEmptyMap() {
+        var result = podiumSemaineService.computeScoreSemaineGolf(Collections.emptyList());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void computeScoreSemaineGolf_givenPodiumJourList_shouldReturnJoueurScoreMap() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var joueur2 = new Joueur("A2", "Joueur DEUX");
+        var joueur3 = new Joueur("A3", "Joueur TROIS");
+        var now = Instant.now();
+        var sutomPartage1 = new SutomPartage(joueur1, now, 2, 8, 3);
+        var sutomPartage2 = new SutomPartage(joueur2, now, 3, 10, 0);
+        var sutomPartage3 = new SutomPartage(joueur3, now, 4, 13, 1);
+        var sutomPartage3echec = new SutomPartage(joueur3, now, 6, 21, 10, true);
+        var podium1 = List.of(sutomPartage1, sutomPartage3);
+        var podium2 = List.of(sutomPartage2, sutomPartage1, sutomPartage3);
+        var podium3 = List.of(sutomPartage1, sutomPartage2);
+        var podium4 = List.of(sutomPartage2, sutomPartage3echec);
+        var result = podiumSemaineService.computeScoreSemaineGolf(
+            List.of(podium1, podium2, podium3, podium4, List.of()));
+
+        assertThat(result).containsOnly(
+            Map.entry(joueur1, new GolfScore(15, 57, 24)),
+            Map.entry(joueur2, new GolfScore(15, 60, 30)),
+            Map.entry(joueur3, new GolfScore(20, 106, 47))
         );
     }
 
@@ -78,6 +111,43 @@ class PodiumSemaineServiceTest {
             joueur3, new int[]{3, 1, 2, 1, 1});
 
         var result = podiumSemaineService.sortScoreSemaine(scoreSemaine);
+
+        assertThat(result).containsExactly(Set.of(joueur2, joueur3), Set.of(joueur1));
+    }
+
+    @Test
+    void sortScoreSemaineGolf_givenEmptyScoreSemaine_shouldReturnEmptyPodiumSemaine() {
+        var result = podiumSemaineService.sortScoreSemaineGolf(Collections.emptyMap());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void sortScoreSemaineGolf_givenScoreSemaine_shouldReturnPodiumSemaine() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var joueur2 = new Joueur("A2", "Joueur DEUX");
+        var joueur3 = new Joueur("A3", "Joueur TROIS");
+        var scoreSemaine = Map.of(
+            joueur1, new GolfScore(15, 57, 24),
+            joueur2, new GolfScore(15, 60, 30),
+            joueur3, new GolfScore(20, 106, 47));
+
+        var result = podiumSemaineService.sortScoreSemaineGolf(scoreSemaine);
+
+        assertThat(result).containsExactly(Set.of(joueur2), Set.of(joueur1), Set.of(joueur3));
+    }
+
+    @Test
+    void sortScoreSemaineGolf_givenScoreSemaineWithTiedScore_shouldReturnPodiumSemaine() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var joueur2 = new Joueur("A2", "Joueur DEUX");
+        var joueur3 = new Joueur("A3", "Joueur TROIS");
+        var scoreSemaine = Map.of(
+            joueur1, new GolfScore(15, 57, 24),
+            joueur2, new GolfScore(15, 60, 30),
+            joueur3, new GolfScore(15, 60, 30));
+
+        var result = podiumSemaineService.sortScoreSemaineGolf(scoreSemaine);
 
         assertThat(result).containsExactly(Set.of(joueur2, joueur3), Set.of(joueur1));
     }
@@ -176,6 +246,28 @@ class PodiumSemaineServiceTest {
                         
             4. Joueur QUATRE
             4. Joueur CINQ""");
+    }
+
+    @Test
+    void podiumSemainePrettyPrintGolf_givenEmptyList_shouldReturnEmptyString() {
+        var result = podiumSemaineService.podiumSemainePrettyPrintGolf(Collections.emptyList(), null, null);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void podiumSemainePrettyPrintGolf_givenJoueurWithTwoDates_shouldReturnPodiumSemainePrettyPrintGolf() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var firstZonedDate = ZonedDateTime.parse("2022-08-29T10:00:00+02:00[Europe/Paris]");
+        var lastZonedDate = ZonedDateTime.parse("2022-09-02T10:00:00+02:00[Europe/Paris]");
+
+        var result = podiumSemaineService.podiumSemainePrettyPrintGolf(List.of(Set.of(joueur1)),
+            firstZonedDate, lastZonedDate);
+
+        assertThat(result).isEqualTo("""
+            *SUTOM classement semaine du 29/08-02/09/22 mode golf :golf:*
+                        
+            :trophy: *Joueur UN*""");
     }
 
     @Test
