@@ -44,7 +44,7 @@ jobs:
         SLACK_TOKEN: ${{ secrets.SlackToken }}
         SLACK_CHANNEL: ${{ secrets.SlackChannel }}
     - name: Run podium semaine with Maven
-      run: mvn spring-boot:run -Dspring-boot.run.arguments="semaine"
+      run: mvn spring-boot:run -Dspring-boot.run.arguments="semaine --printScore"
       env:
         SLACK_TOKEN: ${{ secrets.SlackToken }}
         SLACK_CHANNEL: ${{ secrets.SlackChannel }}
