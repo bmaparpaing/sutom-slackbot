@@ -93,13 +93,15 @@ public class PodiumSemaineService {
         }
         int i = 0;
         for (Set<Joueur> joueurs : podiumSemaine) {
+            boolean linebreak = i == 3;
             for (Joueur joueur : joueurs) {
                 switch (i) {
                     case 0 -> sb.append("\n:trophy: *").append(joueur.nom()).append("*");
                     case 1 -> sb.append("\n:second_place_medal: ").append(joueur.nom());
                     case 2 -> sb.append("\n:third_place_medal: ").append(joueur.nom());
-                    default -> sb.append("\n").append(i + 1).append(". ").append(joueur.nom());
+                    default -> sb.append(linebreak ? "\n\n" : "\n").append(i + 1).append(". ").append(joueur.nom());
                 }
+                linebreak = false;
             }
             i += joueurs.size();
         }

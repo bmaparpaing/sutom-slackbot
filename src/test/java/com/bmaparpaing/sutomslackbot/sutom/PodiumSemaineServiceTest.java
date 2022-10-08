@@ -106,6 +106,7 @@ class PodiumSemaineServiceTest {
             :trophy: *Joueur UN*
             :second_place_medal: Joueur DEUX
             :third_place_medal: Joueur TROIS
+                        
             4. Joueur QUATRE
             5. Joueur CINQ""");
     }
@@ -172,6 +173,7 @@ class PodiumSemaineServiceTest {
             :trophy: *Joueur UN*
             :second_place_medal: Joueur DEUX
             :second_place_medal: Joueur TROIS
+                        
             4. Joueur QUATRE
             4. Joueur CINQ""");
     }
