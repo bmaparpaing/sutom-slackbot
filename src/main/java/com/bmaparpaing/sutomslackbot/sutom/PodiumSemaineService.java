@@ -225,4 +225,37 @@ public class PodiumSemaineService {
         }
         return sb.toString();
     }
+
+    public String scoreSemainePrettyPrintGolf(Map<Joueur, GolfScore> scoreSemaine, List<Set<Joueur>> podiumSemaine) {
+        var sb = new StringBuilder();
+        int nameColumnSize = podiumSemaine.stream().flatMap(Collection::stream)
+            .map(Joueur::nom).mapToInt(String::length).max().orElse(0) + 4;
+        var headerCoup = "coups";
+        var headerScore = "score";
+        var headerSubScore = "score2";
+        int coupColumnSize = Math.max(
+            (int) Math.log10(
+                scoreSemaine.values().stream().mapToInt(GolfScore::coup).max().orElse(0)) + 1,
+            headerCoup.length()) + 1;
+        int scoreColumnSize = Math.max(
+            (int) Math.log10(
+                scoreSemaine.values().stream().mapToInt(GolfScore::scoreLettre).max().orElse(0)) + 1,
+            headerScore.length()) + 1;
+        int subScoreColumnSize = Math.max(
+            (int) Math.log10(
+                scoreSemaine.values().stream().mapToInt(GolfScore::subScoreLettre).max().orElse(0)) + 1,
+            headerSubScore.length()) + 1;
+        var format = "%-" + nameColumnSize + "s%" + coupColumnSize + "s%" + scoreColumnSize + "s%"
+            + subScoreColumnSize + "s%n";
+        try (var formatter = new Formatter(sb)) {
+            if (!podiumSemaine.isEmpty()) {
+                formatter.format(format, "", headerCoup, headerScore, headerSubScore);
+            }
+            podiumSemaine.stream().flatMap(Collection::stream).forEach(joueur -> {
+                var score = scoreSemaine.get(joueur);
+                formatter.format(format, joueur.nom(), score.coup(), score.scoreLettre(), score.subScoreLettre());
+            });
+        }
+        return sb.toString();
+    }
 }

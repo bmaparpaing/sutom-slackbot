@@ -81,7 +81,8 @@ public class PodiumController {
         }
     }
 
-    public void computeAndPostPodiumSemaineGolf(ZonedDateTime zonedDateTime) throws SlackApiException, IOException {
+    public void computeAndPostPodiumSemaineGolf(ZonedDateTime zonedDateTime, boolean printScore)
+        throws SlackApiException, IOException {
         int dayOfWeek = zonedDateTime.getDayOfWeek().getValue();
         List<List<SutomPartage>> sutomPartages = new ArrayList<>();
         // Pour chaque jour depuis la date en paramètre jusqu'au lundi précédant
@@ -98,6 +99,10 @@ public class PodiumController {
             String text = podiumSemaineService.podiumSemainePrettyPrintGolf(
                 podium, zonedDateTime.minus(dayOfWeek - 1L, ChronoUnit.DAYS), zonedDateTime);
             slackService.postMessage(text);
+            if (printScore) {
+                String scoreText = podiumSemaineService.scoreSemainePrettyPrintGolf(scoreSemaine, podium);
+                slackService.postCodeBlockMessage(scoreText);
+            }
         }
     }
 }

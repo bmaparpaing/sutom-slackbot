@@ -70,9 +70,17 @@ class RunnerTest {
     }
 
     @Test
-    void run_givenCaseInsensitiveArgumentSemaineAndGolfOption_shouldRunPodiumSemaine() throws Exception {
+    void run_givenCaseInsensitiveArgumentSemaineAndGolfOption_shouldRunPodiumSemaineGolf() throws Exception {
         runner.run("SemAINe", "--golf");
 
-        verify(podiumController, only()).computeAndPostPodiumSemaineGolf(any());
+        verify(podiumController, only()).computeAndPostPodiumSemaineGolf(any(), eq(false));
+    }
+
+    @Test
+    void run_givenCaseInsensitiveArgumentSemaineAndGolfPrintScore_shouldRunPodiumSemaineGolfWithScore()
+        throws Exception {
+        runner.run("SemAINe", "--golf", "--printScore");
+
+        verify(podiumController, only()).computeAndPostPodiumSemaineGolf(any(), eq(true));
     }
 }

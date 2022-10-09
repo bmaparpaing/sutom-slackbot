@@ -35,7 +35,7 @@ public class Runner implements CommandLineRunner {
                 }
             } else if ("semaine".equalsIgnoreCase(arguments.get(0))) {
                 if (arguments.contains("--golf")) {
-                    podiumController.computeAndPostPodiumSemaineGolf(now);
+                    podiumController.computeAndPostPodiumSemaineGolf(now, arguments.contains("--printScore"));
                 } else {
                     podiumController.computeAndPostPodiumSemaine(now, arguments.contains("--printScore"));
                 }

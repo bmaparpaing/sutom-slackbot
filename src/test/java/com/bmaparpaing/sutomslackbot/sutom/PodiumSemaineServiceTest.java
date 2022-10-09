@@ -321,4 +321,41 @@ class PodiumSemaineServiceTest {
             """);
     }
 
+    @Test
+    void scoreSemainePrettyPrintGolf_givenEmptyScoreSemaine_shouldReturnEmptyString() {
+        var result = podiumSemaineService.scoreSemainePrettyPrintGolf(Collections.emptyMap(), Collections.emptyList());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void scoreSemainePrettyPrintGolf_givenScoreSemaine_shouldReturnScoreSemainePrettyPrintGolf() {
+        var joueur1 = new Joueur("A1", "Joueur UN");
+        var joueur2 = new Joueur("A2", "Joueur DEUX");
+        var joueur3 = new Joueur("A3", "Joueur TROIS");
+        var joueur4 = new Joueur("A4", "Joueur QUATRE");
+        var joueur5 = new Joueur("A5", "Joueur CINQ");
+        var scoreSemaine = Map.of(
+            joueur1, new GolfScore(16, 110, 49),
+            joueur2, new GolfScore(14, 52, 25),
+            joueur3, new GolfScore(16, 98, 40),
+            joueur4, new GolfScore(14, 49, 18),
+            joueur5, new GolfScore(12, 63, 30));
+        List<Set<Joueur>> podium = List.of(
+            Set.of(joueur5),
+            Set.of(joueur2),
+            Set.of(joueur4),
+            Set.of(joueur1),
+            Set.of(joueur3));
+        var result = podiumSemaineService.scoreSemainePrettyPrintGolf(scoreSemaine, podium);
+        assertThat(result).isEqualTo(
+            "                  coups score score2\n" + """
+                Joueur CINQ          12    63     30
+                Joueur DEUX          14    52     25
+                Joueur QUATRE        14    49     18
+                Joueur UN            16   110     49
+                Joueur TROIS         16    98     40
+                """);
+    }
+
 }
