@@ -20,7 +20,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Run podium jour with Maven
-      run: mvn spring-boot:run -Dspring-boot.run.arguments="jour"
+      run: mvn spring-boot:run -Dspring-boot.run.arguments="jour --alternate"
       env:
         SLACK_TOKEN: ${{ secrets.SlackToken }}
         SLACK_CHANNEL: ${{ secrets.SlackChannel }}
@@ -44,7 +44,7 @@ jobs:
         SLACK_TOKEN: ${{ secrets.SlackToken }}
         SLACK_CHANNEL: ${{ secrets.SlackChannel }}
     - name: Run podium semaine with Maven
-      run: mvn spring-boot:run -Dspring-boot.run.arguments="semaine --printScore"
+      run: mvn spring-boot:run -Dspring-boot.run.arguments="semaine --alternate --printScore"
       env:
         SLACK_TOKEN: ${{ secrets.SlackToken }}
         SLACK_CHANNEL: ${{ secrets.SlackChannel }}
