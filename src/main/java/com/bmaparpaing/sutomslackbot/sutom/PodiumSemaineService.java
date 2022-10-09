@@ -69,14 +69,22 @@ public class PodiumSemaineService {
         return scoreSemaine;
     }
 
+    /**
+     * Calcule le score semaine mode Golf de chaque joueur participant au moins une fois sur l'ensemble des jours joués.
+     *
+     * @param sutomPartages Une liste de listes de SutomPartages, une liste par jour joué.
+     * @return Une Map associant à chaque joueur son score mode Golf global sur la semaine.
+     */
     public Map<Joueur, GolfScore> computeScoreSemaineGolf(List<List<SutomPartage>> sutomPartages) {
         List<List<JoueurGolfScore>> joueurGolfScores =
             sutomPartages.stream().map(jour -> jour.stream().map(JoueurGolfScore::new).toList()).toList();
-
+        // Tableau de la valeur de la pénalité pour chaque jour manqué
         Integer[] maxCoupParJour = joueurGolfScores.stream()
             .map(podiumJour -> podiumJour.stream().map(JoueurGolfScore::golfScore).mapToInt(GolfScore::coup).max())
             .map(optionalMax -> optionalMax.orElse(0))
             .toArray(Integer[]::new);
+        // Tableau des coups de chaque jour pour chaque joueur, pour attribuer les coups des joueurs ayant manqué un ou
+        // plusieurs jours
         var scoreSemaine = new HashMap<Joueur, int[]>();
         for (int i = 0; i < joueurGolfScores.size(); i++) {
             final int index = i;
@@ -85,6 +93,8 @@ public class PodiumSemaineService {
                 scoreSemaine.get(joueurGolfScore.joueur())[index] = joueurGolfScore.golfScore().coup();
             });
         }
+        // Pour chaque jour manqué (score à 0), le joueur reçoit automatiquement le nombre de coups du dernier
+        // joueur + 1
         for (int[] scores : scoreSemaine.values()) {
             for (int i = 0; i < scores.length; i++) {
                 if (scores[i] == 0) {
@@ -92,6 +102,7 @@ public class PodiumSemaineService {
                 }
             }
         }
+        // Addition de tous les coups/scores/subScores de chaque jour
         var golfScoreSemaine = new HashMap<Joueur, GolfScore>();
         scoreSemaine.forEach((joueur, coups) -> golfScoreSemaine.put(joueur, new GolfScore(
             IntStream.of(coups).sum(),
@@ -110,6 +121,12 @@ public class PodiumSemaineService {
         return golfScoreSemaine;
     }
 
+    /**
+     * Trie les joueurs selon le mode Golf : au moins de coups, puis au plus grand score, puis au plus grand subScore.
+     *
+     * @param scoreSemaine Une Map associant à chaque joueur le score mode Golf de la semaine.
+     * @return Une liste de joueurs groupés en Set pour s'accommoder d'une égalité le cas échéant.
+     */
     public List<Set<Joueur>> sortScoreSemaineGolf(Map<Joueur, GolfScore> scoreSemaine) {
         Map<GolfScore, Set<Joueur>> joueursByScore = scoreSemaine.entrySet().stream()
             .collect(Collectors.groupingBy(
@@ -202,6 +219,21 @@ public class PodiumSemaineService {
         return sb.toString();
     }
 
+    /**
+     * Retourne le détail des scores des joueurs sous forme de tableau texte.
+     * Exemple de rendu :
+     * <pre>
+     *     Joueur 1    1 2 1 3 1   8
+     *     Joueur 2    2 1 3 2 3  11
+     *     Joueur 3    3 3 2 1 2  11
+     * </pre>
+     *
+     * @param scoreSemaine  Une Map associant à chaque joueur le score du joueur sur chaque journée.
+     * @param podiumSemaine Une liste de joueurs représentant le classement, groupés en Set pour s'accommoder
+     *                      d'une égalité le cas échéant.
+     * @return Une chaîne de caractère contenant un tableau texte exposant les scores de chaque joueur sur chaque
+     * journée, ainsi que le total de chaque joueur, les joueurs étant triés selon le classement passé en paramètre.
+     */
     public String scoreSemainePrettyPrint(Map<Joueur, int[]> scoreSemaine, List<Set<Joueur>> podiumSemaine) {
         var sb = new StringBuilder();
         long nombreJoueurs = podiumSemaine.stream().mapToLong(Collection::size).sum();
@@ -226,6 +258,22 @@ public class PodiumSemaineService {
         return sb.toString();
     }
 
+    /**
+     * Retourne le détail des scores mode Golf des joueurs sous forme de tableau texte.
+     * Exemple de rendu :
+     * <pre>
+     *                  coups score score2
+     *     Joueur 1        11    56     22
+     *     Joueur 2        12    65     23
+     *     Joueur 3        13    62     20
+     * </pre>
+     *
+     * @param scoreSemaine  Une Map associant à chaque joueur le score mode Golf du joueur sur la semaine.
+     * @param podiumSemaine Une liste de joueurs représentant le classement, groupés en Set pour s'accommoder
+     *                      d'une égalité le cas échéant.
+     * @return Une chaîne de caractère contenant un tableau texte exposant les scores de chaque joueur pour la semaine,
+     * les joueurs étant triés selon le classement passé en paramètre.
+     */
     public String scoreSemainePrettyPrintGolf(Map<Joueur, GolfScore> scoreSemaine, List<Set<Joueur>> podiumSemaine) {
         var sb = new StringBuilder();
         int nameColumnSize = podiumSemaine.stream().flatMap(Collection::stream)
