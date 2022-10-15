@@ -39,7 +39,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Run podium jour with Maven
-      run: mvn spring-boot:run -Dspring-boot.run.arguments="jour"
+      run: mvn spring-boot:run -Dspring-boot.run.arguments="jour --alternate"
       env:
         SLACK_TOKEN: ${{ secrets.SlackToken }}
         SLACK_CHANNEL: ${{ secrets.SlackChannel }}
